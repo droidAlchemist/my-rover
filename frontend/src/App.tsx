@@ -1,9 +1,8 @@
 import { BrowserRouter } from "react-router-dom";
 import { Box, CssBaseline } from "@mui/material";
-import Routing from "./routes/Routing";
-import { Footer } from "./components";
-import Sidenav from "./components/sidenav/sidenav";
-import MainLayout from "./layout/main-layout";
+import { Routing } from "./routes";
+import { Footer, Sidenav } from "./components";
+import { MainLayout } from "./layout";
 
 const App = () => {
   return (
@@ -11,8 +10,9 @@ const App = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        height: "100vh",
-        backgroundColor: "rgb(248, 249, 250)",
+        height: "100%",
+        minHeight: "100vh",
+        backgroundColor: "#f8f9fa",
       }}
     >
       <BrowserRouter>

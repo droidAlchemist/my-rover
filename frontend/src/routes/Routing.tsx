@@ -1,13 +1,14 @@
 import { Routes, Route } from "react-router-dom";
 import { ROUTES } from "@/types";
-import ControlPage from "@/pages/control-page";
-import HomePage from "@/pages/home-page";
+import { ControlPage, DashboardPage, DetailsPage, LogPage } from "@/pages";
 
-const Routing = () => {
+export const Routing = () => {
   return (
     <Routes>
-      <Route path={ROUTES.HOME_PAGE} element={<HomePage />} />
+      <Route path={ROUTES.DASHBOARD_PAGE} element={<DashboardPage />} />
       <Route path={ROUTES.CONTROL_PAGE} element={<ControlPage />} />
+      <Route path={ROUTES.LOG_PAGE} element={<LogPage />} />
+      <Route path={ROUTES.DETAILS_PAGE} element={<DetailsPage />} />
     </Routes>
   );
 };

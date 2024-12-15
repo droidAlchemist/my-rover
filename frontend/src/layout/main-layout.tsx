@@ -4,11 +4,12 @@ import { ReactNode } from "react";
 interface MainLayoutProps {
   children: ReactNode;
 }
-function MainLayout({ children }: MainLayoutProps) {
+export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
     <Box
       sx={{
-        p: 3,
+        px: 3,
+        display: "flex",
       }}
     >
       <Box
@@ -19,12 +20,12 @@ function MainLayout({ children }: MainLayoutProps) {
         left={0}
         sx={{
           opacity: 1,
-          background: "rgb(17, 205, 239)",
+          background: "#11cdef",
         }}
       />
       {children}
     </Box>
   );
-}
+};
 
 export default MainLayout;

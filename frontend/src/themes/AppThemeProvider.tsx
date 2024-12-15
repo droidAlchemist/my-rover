@@ -13,7 +13,7 @@ export const AppThemeProvider: React.FC<Props> = ({ children }) => {
   const theme = responsiveFontSizes(
     createTheme({
       typography: {
-        fontFamily: "Dosis, sans-serif",
+        fontFamily: "Open Sans, Helvetica, Arial, sans-serif",
       },
     }),
   );

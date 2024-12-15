@@ -7,7 +7,7 @@ export function IotCoreContainer() {
   const connection = useAwsIotMqtt(credentials);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row", gap: 6 }}>
+    <Box sx={{ display: "flex", flexDirection: "row" }}>
       {/* Show Telemtry data using IOT Core from ROS2 */}
       <Telemetry connection={connection} />
     </Box>

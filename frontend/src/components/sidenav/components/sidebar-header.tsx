@@ -20,9 +20,17 @@ export const SidebarHeader = ({ open, setOpen }: SidebarHeaderProps) => {
     <DrawerHeader>
       {open && (
         <>
-          <Box sx={{ display: "flex", alignItems: "center", pl: 1, gap: 2 }}>
-            <AutoAwesome color="info" />
-            <Typography variant="h6" noWrap component="div">
+          <Box sx={{ display: "flex", alignItems: "center", pl: 1, gap: 1 }}>
+            <AutoAwesome sx={{ fontSize: 20, color: "#11cdef" }} />
+            <Typography
+              variant="h6"
+              sx={{
+                fontSize: "0.875rem !important",
+                fontWeight: 600,
+                color: "#344767",
+              }}
+              component="div"
+            >
               My Rover
             </Typography>
           </Box>
@@ -45,6 +53,5 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "space-between",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));

@@ -5,8 +5,8 @@ export function Footer() {
     <Box
       sx={{
         width: "100%",
-        position: "absolute",
-        bottom: 0,
+        // position: "absolute",
+        // bottom: 0,
         backgroundColor: "transparent",
       }}
       component="footer"

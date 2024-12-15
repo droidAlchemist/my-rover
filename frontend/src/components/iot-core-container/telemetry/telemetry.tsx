@@ -58,7 +58,6 @@ export function Telemetry({ connection }: TelemetryProps) {
         flexDirection: "column",
         gap: 2,
         flexGrow: 1,
-        mt: 3,
       }}
     >
       <Grid container columnSpacing={4} columns={4}>
@@ -77,7 +76,6 @@ export function Telemetry({ connection }: TelemetryProps) {
             colors={["#5BE12C", "#F5CD19", "#EA4228"]}
             percent={telemetryData?.temperature}
             arcPadding={0.02}
-            textColor="#000"
             formatTextValue={(value) => value + " C"}
           />
         </Grid>

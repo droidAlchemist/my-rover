@@ -17,7 +17,9 @@ export function TelemetryItem({ title, subheader, ...other }: Props) {
         textAlign: "center",
       }}
     >
-      <Typography variant="h5">{title}</Typography>
+      <Typography sx={{ color: "white" }} variant="h5">
+        {title}
+      </Typography>
       <GaugeChart id={`gauge-chart-${title}`} {...other} />
     </Box>
   );

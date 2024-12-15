@@ -1,4 +1,6 @@
 export const ROUTES = {
-  HOME_PAGE: "/",
+  DASHBOARD_PAGE: "/",
   CONTROL_PAGE: "/control",
+  LOG_PAGE: "/log",
+  DETAILS_PAGE: "/details",
 };

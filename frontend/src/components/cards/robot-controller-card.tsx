@@ -9,9 +9,7 @@ interface RobotControllerCardProps {
   connection: mqtt.MqttClientConnection | null;
 }
 
-export default function RobotControllerCard({
-  connection,
-}: RobotControllerCardProps) {
+export function RobotControllerCard({ connection }: RobotControllerCardProps) {
   const onChangeJoystick = useCallback(
     (d: JoystickUpdateEventType) => {
       const cmd = getCommandVelocity(d);
@@ -27,17 +25,23 @@ export default function RobotControllerCard({
   );
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        mt: 4,
+        alignItems: "center",
+      }}
+    >
       <Joystick
         size={140}
         stickSize={50}
         sticky={false}
-        baseColor="gray"
         throttle={1000}
         minDistance={10}
         move={(d: any) => onChangeJoystick(d)}
-        baseImage="gamepad.jpg"
-        stickImage="green-ball.png"
+        baseImage="gamepad_v2.svg"
+        stickImage="ball.svg"
         baseShape={JoystickShape.Square}
       />
     </Box>
