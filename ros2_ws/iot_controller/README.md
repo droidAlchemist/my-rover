@@ -178,7 +178,7 @@ This node can be used to send messages directly to AWS IoT Core using MQTT. Laun
 
 ```
 source ~/aws-iot-robot-connectivity-samples-ros2/workspace/install/setup.bash
-ros2 run my_rover mock_telemetry_pub
+ros2 run iot_controller mock_telemetry_pub
 ```
 
 This ROS2 node publishes mock telemetry data on topic  mock_telemetry  and can be verified by the following command, in a new terminal
@@ -193,7 +193,7 @@ Next run the node, that subscribes to the mock telemetry data and publishes to A
 ```
 export IOT_CONFIG_FILE=~/aws-iot-robot-connectivity-samples-ros2/iot_certs_and_config/iot_config.json
 source ~/aws-iot-robot-connectivity-samples-ros2/workspace/install/setup.bash
-ros2 run my_rover mqtt_telemetry_pub --ros-args --param path_for_config:=$IOT_CONFIG_FILE
+ros2 run iot_controller mqtt_telemetry_pub --ros-args --param path_for_config:=$IOT_CONFIG_FILE
 ```
 
 **Endpoint discovery**: this node also allows the use of cloud discovery, which allows the automatic discovery of AWS Greengrass core devices to connect to instead of a cloud endpoint. For more information on this option, please see the [developer guide](https://docs.aws.amazon.com/greengrass/v2/developerguide/connect-client-devices.html).

@@ -4,7 +4,7 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from awscrt import mqtt 
-from my_rover.connection_helper import ConnectionHelper
+from iot_controller.connection_helper import ConnectionHelper
 import json
 
 RETRY_WAIT_TIME_SECONDS = 5

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>my_rover</name>
+  <name>iot_controller</name>
   <version>1.0.0</version>
-  <description>AWS IoT connectivity demo for ROS2</description>
-  <maintainer email="vkkondur@amazon.com">vkkondur</maintainer>
+  <description>ROS 2 IOT Core and Kinesis Controller</description>
+  <maintainer email="joshua.sj7@gmail.com">joshua</maintainer>
  <license>MIT-0</license>
  
   <depend>rclpy</depend>

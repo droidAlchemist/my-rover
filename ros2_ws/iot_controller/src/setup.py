@@ -2,7 +2,7 @@ import os
 from glob import glob
 from setuptools import setup
 
-package_name = 'my_rover'
+package_name = 'iot_controller'
 
 setup(
     name=package_name,
@@ -18,13 +18,13 @@ setup(
     zip_safe=True,
     maintainer='Joshua SJ',
     maintainer_email='joshua.sj7@gmail.com',
-    description='AWS IoT connectivity demo for ROS2',
+    description='ROS2 controller for IOT Core and Kinesis',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'mock_telemetry_pub = my_rover.mock_telemetry_publisher:main',
-            'mqtt_telemetry_pub = my_rover.mqtt_telemetry_publisher:main',
-            'mqtt_control_sub = my_rover.mqtt_control_listener:main',
+            'mock_telemetry_pub = iot_controller.mock_telemetry_publisher:main',
+            'mqtt_telemetry_pub = iot_controller.mqtt_telemetry_publisher:main',
+            'mqtt_control_sub = iot_controller.mqtt_control_listener:main',
         ],
     },
 )
