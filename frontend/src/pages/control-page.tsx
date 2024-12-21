@@ -48,9 +48,9 @@ export const ControlPage = () => {
         <Grid item xs={12} md={6} lg={3}>
           <StatusInfoCard
             title="LED Light"
-            count="ON"
+            count="OFF"
             gradientColor="linear-gradient(310deg, #fb6340, #fbb140)"
-            activeStatus={true}
+            activeStatus={false}
             onAction={onClickLed}
             icon={<FlashlightOn />}
             percentage={{
@@ -63,15 +63,15 @@ export const ControlPage = () => {
         <Grid item xs={12} md={6} lg={3}>
           <StatusInfoCard
             title="Camera 1"
-            count="ON"
+            count="OFF"
             gradientColor="linear-gradient(310deg,#8A2387,#FF0080)"
-            activeStatus={true}
+            activeStatus={false}
             onAction={onClickCamera}
             icon={<Camera />}
             percentage={{
               color: "#F0000F",
-              count: "10 mins",
-              text: "remaining.",
+              count: "x=1 y=1",
+              text: " Pose",
             }}
           />
         </Grid>
@@ -81,7 +81,7 @@ export const ControlPage = () => {
             count="OFF"
             gradientColor="linear-gradient(310deg,#1171ef,#11cdef)"
             activeStatus={false}
-            onAction={onClickLidar}
+            // onAction={onClickLidar}
             icon={<Navigation />}
             percentage={{
               color: "error",

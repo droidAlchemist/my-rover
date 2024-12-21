@@ -3,6 +3,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String, Float32
 from nav_msgs.msg import Odometry
+from sensor_msgs.msg import Imu
 from geometry_msgs.msg import PoseStamped
 from awscrt import mqtt 
 from iot_controller.connection_helper import ConnectionHelper
@@ -35,8 +36,8 @@ class MqttPublisher(Node):
         self.create_subscription(PoseStamped, '/robot_pose', self.robot_pose_callback, 10) 
         # Create a subscription to the /imu/data topic to get the robot's imu data
         self.create_subscription(
-            String,
-            '/imu/data',
+            Imu,
+            'imu/data',
             self.robot_imu_callback,
             10
         )

@@ -1,10 +1,10 @@
 import { DIRECTION_TYPES, MOVEMENT_TYPES } from "./constants";
 
 export type IotSensorMessageType = {
-  battery: number;
+  voltage: number;
   temperature: number;
   velocity: number;
-  distance: number;
+  imu: number;
 };
 
 export type CoordinateType = {

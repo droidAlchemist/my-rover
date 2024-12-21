@@ -10,10 +10,10 @@ interface TelemetryProps {
 }
 
 const DEFAULT_DATA = {
-  battery: 0,
+  voltage: 0,
   temperature: 0,
   velocity: 0,
-  distance: 0,
+  imu: 0,
 };
 
 export function Telemetry({ connection }: TelemetryProps) {
@@ -63,9 +63,10 @@ export function Telemetry({ connection }: TelemetryProps) {
       <Grid container columnSpacing={4} columns={4}>
         <Grid item xs={1}>
           <TelemetryItem
-            title="Battery"
-            nrOfLevels={20}
-            percent={telemetryData?.battery}
+            title="Voltage"
+            nrOfLevels={15}
+            percent={telemetryData?.voltage}
+            formatTextValue={(value) => value + " V"}
           />
         </Grid>
         <Grid item xs={1}>
@@ -84,14 +85,14 @@ export function Telemetry({ connection }: TelemetryProps) {
             title="Velocity"
             nrOfLevels={10}
             percent={telemetryData?.velocity}
-            formatTextValue={(value) => value + " km/hr"}
+            formatTextValue={(value) => value + " m/hr"}
           />
         </Grid>
         <Grid item xs={1}>
           <TelemetryItem
-            title="Distance"
-            percent={telemetryData?.distance}
-            formatTextValue={(value) => value + " m"}
+            title="Imu"
+            percent={telemetryData?.imu}
+            formatTextValue={(value) => value + " ?"}
           />
         </Grid>
       </Grid>

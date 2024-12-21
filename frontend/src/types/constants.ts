@@ -1,6 +1,6 @@
 export const DRAWER_WIDTH = 240;
 export enum IOT_ROS2_TOPICS {
-  "TELEMETRY" = "ros2_mock_telemetry_topic",
+  "TELEMETRY" = "ros2_telemetry_topic",
   "CONTROL1" = "cmd_vel",
 }
 export enum VIDEO_STREAM_TYPES {
