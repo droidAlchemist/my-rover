@@ -5,6 +5,7 @@ from std_msgs.msg import String, Float32
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import PoseStamped
+import json
 from awscrt import mqtt 
 from iot_controller.connection_helper import ConnectionHelper
 
@@ -53,7 +54,6 @@ class MqttPublisher(Node):
 
     def voltage_listener_callback(self, msg):
         """Callback for the ros2 voltage topic"""
-        self.get_logger().info(msg)
         message_json = {
             "voltage": msg.data
         }
@@ -61,25 +61,22 @@ class MqttPublisher(Node):
 
     def odom_callback(self, msg):
         """Callback for the ros2 odometry topic"""
-        self.get_logger().info(msg)
         message_json = {
-            "odometry": msg.data
+            "odometry": json.dumps(msg.data)
         }
         self.publish_message(message_json)
 
     def robot_pose_callback(self, msg):
         """Callback for the ros2 robot pose topic"""
-        self.get_logger().info(msg)
         message_json = {
-            "pose": msg.data
+            "pose": json.dumps(msg.data)
         }
         self.publish_message(message_json)
 
     def robot_imu_callback(self, msg):
         """Callback for the ros2 robot pose topic"""
-        self.get_logger().info(msg)
         message_json = {
-            "imu": msg.data
+            "imu": json.dumps(msg.data)
         }
         self.publish_message(message_json)
         
