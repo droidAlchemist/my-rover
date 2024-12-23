@@ -20,7 +20,7 @@ ros2 run robot_pose_publisher robot_pose_publisher
 
 ## Launch bringup ?
 
-ros2 launch ugv_bringup bringup_lidar.launch.py 
+ros2 launch ugv_bringup bringup_rover.launch.py 
 
 
 
