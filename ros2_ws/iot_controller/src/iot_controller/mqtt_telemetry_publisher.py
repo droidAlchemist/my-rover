@@ -61,10 +61,13 @@ class MqttPublisher(Node):
 
     def odom_callback(self, msg):
         """Callback for the ros2 odometry topic"""
-        message_json = {
-            "odometry": msg.data
-        }
-        self.publish_message(message_json)
+        try:
+            message_json = {
+                "odometry": msg.data
+            }
+            self.publish_message(message_json)
+        except:
+           self.get_logger().info("Failed to send odometry data")
 
     def robot_pose_callback(self, msg):
         """Callback for the ros2 robot pose topic"""
