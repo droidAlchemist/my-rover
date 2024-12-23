@@ -25,16 +25,16 @@ def generate_launch_description():
         description='Choose which rviz configuration to use'
     )
 
-    # Include the robot state launch from the ugv_description package
-    robot_state_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('ugv_description'), 'launch', 'display.launch.py')
-        ),
-        launch_arguments={
-            'use_rviz': LaunchConfiguration('use_rviz'),
-            'rviz_config': LaunchConfiguration('rviz_config'),
-        }.items()
-    )
+    # # Include the robot state launch from the ugv_description package
+    # robot_state_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(get_package_share_directory('ugv_description'), 'launch', 'display.launch.py')
+    #     ),
+    #     launch_arguments={
+    #         'use_rviz': LaunchConfiguration('use_rviz'),
+    #         'rviz_config': LaunchConfiguration('rviz_config'),
+    #     }.items()
+    # )
 
     # Define the nodes to be launched
     bringup_node = Node(
