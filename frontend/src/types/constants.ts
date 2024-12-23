@@ -9,7 +9,7 @@ export enum VIDEO_STREAM_TYPES {
 }
 export type DIRECTION_TYPES = "FORWARD" | "RIGHT" | "LEFT" | "BACKWARD";
 export type MOVEMENT_TYPES = "move" | "stop" | "start";
-export const ROBOT_CONTROL_MULTIPLIER = 11;
+export const ROBOT_CONTROL_MULTIPLIER = 7;
 
 // Kinesis
 export const ERROR_CHANNEL_ARN_MISSING = "Missing channel ARN";

@@ -50,7 +50,7 @@ class MqttControlListener(Node):
 def main(args=None):
     rclpy.init(args=args)
     global vel_pub
-    vel_pub = rclpy.create_node('vel_publisher').create_publisher(Twist, "/turtle1/cmd_vel", 10)
+    vel_pub = rclpy.create_node('vel_publisher').create_publisher(Twist, "cmd_vel", 10)
     minimal_subscriber = MqttControlListener()
     
     rclpy.spin(minimal_subscriber)
