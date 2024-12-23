@@ -1,7 +1,7 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String, Float32
+from std_msgs.msg import String, Float32, Float32MultiArray
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import PoseStamped
@@ -32,13 +32,13 @@ class MqttPublisher(Node):
             10
         )
          # Create a subscription to the /odom topic to get the odometry data
-        self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
+        self.create_subscription(Float32MultiArray, 'odom/odom_raw', self.odom_callback, 10)
         # Create a subscription to the /robot_pose topic to get the robot's current pose
         self.create_subscription(PoseStamped, '/robot_pose', self.robot_pose_callback, 10) 
         # Create a subscription to the /imu/data topic to get the robot's imu data
         self.create_subscription(
             Imu,
-            'imu/data',
+            'imu/data_raw',
             self.robot_imu_callback,
             10
         )
@@ -62,23 +62,29 @@ class MqttPublisher(Node):
     def odom_callback(self, msg):
         """Callback for the ros2 odometry topic"""
         message_json = {
-            "odometry": json.dumps(msg.data)
+            "odometry": msg.data
         }
         self.publish_message(message_json)
 
     def robot_pose_callback(self, msg):
         """Callback for the ros2 robot pose topic"""
-        message_json = {
-            "pose": json.dumps(msg.data)
-        }
-        self.publish_message(message_json)
+        try:
+            message_json = {
+                "pose": json.dumps(msg.data)
+            }
+            self.publish_message(message_json)
+        except:
+           self.get_logger().info("Failed to send Robot pose data")
 
     def robot_imu_callback(self, msg):
         """Callback for the ros2 robot pose topic"""
-        message_json = {
-            "imu": json.dumps(msg.data)
-        }
-        self.publish_message(message_json)
+        try:
+            message_json = {
+                "imu": json.dumps(msg.data)
+            }
+            self.publish_message(message_json)
+        except:
+           self.get_logger().info("Failed to send IMU data") 
         
 
 def main(args=None):
