@@ -17,7 +17,8 @@ import os
 # if is_jetson():
 #     serial_port = '/dev/ttyTHS1'
 # else:
-serial_port = '/dev/ttyAMA0'
+# serial_port = '/dev/ttyAMA0'
+serial_port = '/dev/ttyAMA10'
 
 # Initialize serial communication with the UGV
 ser = serial.Serial(serial_port, 115200, timeout=1)
