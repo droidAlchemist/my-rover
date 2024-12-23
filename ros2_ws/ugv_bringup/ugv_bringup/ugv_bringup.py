@@ -20,7 +20,7 @@ import os
 #     serial_port = '/dev/ttyTHS1'
 # else:
 #     serial_port = '/dev/ttyAMA0'
-serial_port = '/dev/ttyAMA10'
+serial_port = '/dev/ttyAMA0'
 
 # Helper class for reading lines from a serial port
 class ReadLine:
