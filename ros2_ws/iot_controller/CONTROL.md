@@ -6,18 +6,19 @@ sudo apt install python3-awscrt
 python3 -m pip install awsiotsdk
 
 ## Build command
-colcon build
+cd ros2_ws
+colcon build --packages-select iot_controller
 
 ## To start mock telemetry
 
-source ~/my-rover/ros2_ws/iot_controller/install/setup.bash
+source ~/my-rover/ros2_ws/install/setup.bash
 ros2 run iot_controller mock_telemetry_pub
 ros2 topic echo mock_telemetry
 
 ## To listen to IOT core
 
 export IOT_CONFIG_FILE=~/my-rover/ros2_ws/iot_controller/iot_certs_and_config/iot_config.json
-source ~/my-rover/ros2_ws/iot_controller/install/setup.bash
+source ~/my-rover/ros2_ws/install/setup.bash
 
 ros2 run iot_controller mqtt_telemetry_pub --ros-args --param path_for_config:=$IOT_CONFIG_FILE
 

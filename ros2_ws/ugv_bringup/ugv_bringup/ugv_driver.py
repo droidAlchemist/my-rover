@@ -10,15 +10,14 @@ import subprocess
 import time
 import os
 
-# def is_jetson():
-#     result = any("ugv_jetson" in root for root, dirs, files in os.walk("/"))
-#     return result
+def is_jetson():
+    result = any("ugv_jetson" in root for root, dirs, files in os.walk("/"))
+    return result
 
-# if is_jetson():
-#     serial_port = '/dev/ttyTHS1'
-# else:
-#     serial_port = '/dev/ttyAMA0'
-serial_port = '/dev/ttyAMA0'
+if is_jetson():
+    serial_port = '/dev/ttyTHS1'
+else:
+    serial_port = '/dev/ttyAMA0'
 
 # Initialize serial communication with the UGV
 ser = serial.Serial(serial_port, 115200, timeout=1)

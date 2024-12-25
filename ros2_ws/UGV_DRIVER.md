@@ -1,11 +1,24 @@
 # Steps to setup UGV wave rover
 
+## Install requirements 
+
 python3 -m pip install -r requirements.txt --break-system-packages
 
-export UGV_MODEL=ugv_rover
+## Enable UART / Serial port ttyAMA0
 
-colcon build --packages-select ugv_bringup ugv_tools
-source install/setup.bash
+sudo nano /boot/firmware/config.txt
+[all]
+enable_uart=1
+dtoverlay=uart0
+
+### AMA0 permission denied fix
+
+sudo gpasswd --add ${USER} dialout
+
+ls /dev/ttyA*
+
+## Execute build script
+
 
 ## Drive the car (can control the pan/tilt and LED lights)
 

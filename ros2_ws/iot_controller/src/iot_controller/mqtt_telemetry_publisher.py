@@ -32,13 +32,13 @@ class MqttPublisher(Node):
             10
         )
          # Create a subscription to the /odom topic to get the odometry data
-        self.create_subscription(Float32MultiArray, 'odom/odom_raw', self.odom_callback, 10)
+        self.create_subscription(Float32MultiArray, 'odom', self.odom_callback, 10)
         # Create a subscription to the /robot_pose topic to get the robot's current pose
         self.create_subscription(PoseStamped, '/robot_pose', self.robot_pose_callback, 10) 
         # Create a subscription to the /imu/data topic to get the robot's imu data
         self.create_subscription(
             Imu,
-            'imu/data_raw',
+            'imu/data',
             self.robot_imu_callback,
             10
         )

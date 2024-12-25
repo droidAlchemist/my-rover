@@ -12,15 +12,14 @@ from sensor_msgs.msg import Imu, MagneticField
 import math
 import os
 
-# def is_jetson():
-#     result = any("ugv_jetson" in root for root, dirs, files in os.walk("/"))
-#     return result
+def is_jetson():
+    result = any("ugv_jetson" in root for root, dirs, files in os.walk("/"))
+    return result
 
-# if is_jetson():
-#     serial_port = '/dev/ttyTHS1'
-# else:
-#     serial_port = '/dev/ttyAMA0'
-serial_port = '/dev/ttyAMA0'
+if is_jetson():
+    serial_port = '/dev/ttyTHS1'
+else:
+    serial_port = '/dev/ttyAMA0'
 
 # Helper class for reading lines from a serial port
 class ReadLine:
@@ -109,9 +108,7 @@ class ugv_bringup(Node):
         # Initialize the base controller with the UART port and baud rate
         self.base_controller = BaseController(serial_port, 115200)
         # Timer to periodically execute the feedback loop
-        # self.feedback_timer = self.create_timer(0.001, self.feedback_loop)
-        # CUSTOM --> increase to 10s
-        self.feedback_timer = self.create_timer(10, self.feedback_loop)
+        self.feedback_timer = self.create_timer(0.001, self.feedback_loop)
 
     # Main loop for reading sensor feedback and publishing it to ROS topics
     def feedback_loop(self):
