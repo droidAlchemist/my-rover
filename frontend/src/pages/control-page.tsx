@@ -17,17 +17,19 @@ import { useAwsCredentials, useAwsIotMqtt } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
 import {
   IOT_ROS2_TOPICS,
+  OdometryMessageType,
   TELEMETRY_MESSAGE_TYPES,
   TelemetryMessageType,
 } from "@/types";
 import { mqtt } from "aws-iot-device-sdk-v2";
 
-const { VOLTAGE } = TELEMETRY_MESSAGE_TYPES;
+const { VOLTAGE, ODOMETRY } = TELEMETRY_MESSAGE_TYPES;
 
 export const ControlPage = () => {
   const credentials = useAwsCredentials();
   const connection = useAwsIotMqtt(credentials);
   const [voltageData, setVoltageData] = useState<number>();
+  const [odometryData, setOdometryData] = useState<OdometryMessageType>();
 
   const onClickLed = useCallback((value: boolean) => {
     console.log(value);
@@ -42,6 +44,9 @@ export const ControlPage = () => {
       switch (messageObject.type) {
         case VOLTAGE:
           setVoltageData(Number(messageObject.data));
+          break;
+        case ODOMETRY:
+          setOdometryData(messageObject.data as OdometryMessageType);
           break;
         default:
           break;
@@ -73,7 +78,7 @@ export const ControlPage = () => {
             icon={<Assessment />}
             data={{
               voltage: voltageData,
-              temperature: 0,
+              odometry: odometryData,
             }}
           />
         </Grid>

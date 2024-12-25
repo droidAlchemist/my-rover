@@ -51,10 +51,18 @@ export function TelemetryCard({
                 </Typography>
                 <Grid container sx={{ gap: 1 }}>
                   <Grid item xs={5}>
-                    {renderTypographyItem("Velocity", undefined, "m/s")}
+                    {renderTypographyItem(
+                      "Velocity",
+                      data?.odometry?.twist?.linear?.x,
+                      "m/s",
+                    )}
                   </Grid>
                   <Grid item xs={5}>
-                    {renderTypographyItem("Ang. Velocity", undefined, "m/s")}
+                    {renderTypographyItem(
+                      "Ang. Velocity",
+                      data?.odometry?.twist?.angular?.z,
+                      "m/s",
+                    )}
                   </Grid>
                   <Grid item xs={5}>
                     {renderTypographyItem("Voltage", data?.voltage, "V")}

@@ -59,32 +59,29 @@ class MqttPublisher(Node):
 
     def odom_callback(self, msg):
         """Callback for the ros2 odometry topic"""
-        # try:        
-        twist = msg.twist.twist
-        velocity = twist.linear.x
-        angular_velocity = twist.angular.z
-        pose = msg.pose.pose
-        x = pose.orientation.x
-        y = pose.orientation.y
-        distance = pose.position
-        curr_time = msg.header.stamp            
-        message_json = {
-            "odometry": {
-                "pose": {
-                    "x": x,
-                    "y": y,
-                    "distance": distance
-                },
-                "twist": {
-                    "velocity": velocity,
-                    "angularVelocity": angular_velocity
-                },
-            "time": curr_time
+        try:        
+            twist = msg.twist.twist
+            # velocity = twist.linear.x
+            # angular_velocity = twist.angular.z
+            pose = msg.pose.pose
+            x = pose.orientation.x
+            y = pose.orientation.y
+            distance = pose.position
+            curr_time = msg.header.stamp            
+            message_json = {
+                "odometry": {
+                    "pose": {
+                        "x": x,
+                        "y": y,
+                        "distance": distance
+                    },
+                    "twist": twist,
+                    "time": curr_time
+                }
             }
-        }
-        self.publish_message(message_json)
-        # except:
-        #    self.get_logger().info("Failed to send odometry data")
+            self.publish_message(message_json)
+        except:
+           self.get_logger().info("Failed to send odometry data")
 
     def robot_imu_callback(self, msg):
         """Callback for the ros2 robot pose topic"""

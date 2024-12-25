@@ -8,10 +8,21 @@ export type TelemetryMessageType = {
   type: TELEMETRY_MESSAGE_TYPES;
   data: unknown;
 };
+export type PoseMessageType = {
+  x: number;
+  y: number;
+  distance: number;
+};
+export type OdometryMessageType = {
+  pose: PoseMessageType;
+  twist: IotVelocityMessageType;
+  time: string;
+};
+
 export type IotSensorMessageType = {
   voltage?: number;
   temperature?: number;
-  odometry?: unknown;
+  odometry?: OdometryMessageType;
   imu?: unknown;
 };
 
