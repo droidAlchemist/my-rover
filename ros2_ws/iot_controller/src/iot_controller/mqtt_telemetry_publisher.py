@@ -32,16 +32,14 @@ class MqttPublisher(Node):
             10
         )
          # Create a subscription to the /odom topic to get the odometry data
-        # self.create_subscription(Float32MultiArray, 'odom', self.odom_callback, 10)
-        # # Create a subscription to the /robot_pose topic to get the robot's current pose
-        # self.create_subscription(PoseStamped, '/robot_pose', self.robot_pose_callback, 10) 
-        # # Create a subscription to the /imu/data topic to get the robot's imu data
-        # self.create_subscription(
-        #     Imu,
-        #     'imu/data',
-        #     self.robot_imu_callback,
-        #     10
-        # )
+        self.create_subscription(Odometry, 'odom', self.odom_callback, 10)
+        # Create a subscription to the /imu/data topic to get the robot's imu data
+        self.create_subscription(
+            Imu,
+            'imu/data',
+            self.robot_imu_callback,
+            10
+        )
 
     def publish_message(self, message_json):
         """Callback for the ros2 telemetry topic"""
@@ -62,22 +60,29 @@ class MqttPublisher(Node):
     def odom_callback(self, msg):
         """Callback for the ros2 odometry topic"""
         try:
+            twist = msg.twist.twist
+            velocity = twist.x
+            angular_velocity = twist.z
+            pose = msg.pose.pose
+            x = pose.orientation.x
+            y = pose.orientation.y
+            distance = pose.position            
             message_json = {
-                "odometry": msg.data
+                "odometry": {
+                    "pose": {
+                        "x": x,
+                        "y": y,
+                        "distance": distance
+                    },
+                    "twist": {
+                        "velocity": velocity,
+                        "angularVelocity": angular_velocity
+                    }
+                }
             }
             self.publish_message(message_json)
         except:
            self.get_logger().info("Failed to send odometry data")
-
-    def robot_pose_callback(self, msg):
-        """Callback for the ros2 robot pose topic"""
-        try:
-            message_json = {
-                "pose": json.dumps(msg.data)
-            }
-            self.publish_message(message_json)
-        except:
-           self.get_logger().info("Failed to send Robot pose data")
 
     def robot_imu_callback(self, msg):
         """Callback for the ros2 robot pose topic"""

@@ -20,18 +20,13 @@ ls /dev/ttyA*
 ## Execute build script
 
 
+
 ## Drive the car (can control the pan/tilt and LED lights)
 
 ros2 run ugv_bringup ugv_driver
 
-ros2 run ugv_bringup ugv_bringup ??
 
-
-## Pose publisher ?
-
-ros2 run robot_pose_publisher robot_pose_publisher
-
-## Launch bringup ?
+## Launch bringup 
 
 ros2 launch ugv_bringup bringup_rover.launch.py 
 
