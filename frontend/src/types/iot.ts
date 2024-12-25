@@ -1,10 +1,18 @@
-import { DIRECTION_TYPES, MOVEMENT_TYPES } from "./constants";
+import {
+  DIRECTION_TYPES,
+  MOVEMENT_TYPES,
+  TELEMETRY_MESSAGE_TYPES,
+} from "./constants";
 
+export type TelemetryMessageType = {
+  type: TELEMETRY_MESSAGE_TYPES;
+  data: unknown;
+};
 export type IotSensorMessageType = {
-  voltage: number;
-  temperature: number;
-  velocity: number;
-  imu: number;
+  voltage?: number;
+  temperature?: number;
+  odometry?: unknown;
+  imu?: unknown;
 };
 
 export type CoordinateType = {

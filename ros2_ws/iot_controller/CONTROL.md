@@ -9,23 +9,26 @@ python3 -m pip install awsiotsdk
 cd ros2_ws
 colcon build --packages-select iot_controller
 
-## To start mock telemetry
+## To publish telemetry data
 
+export IOT_CONFIG_FILE=~/my-rover/ros2_ws/iot_controller/iot_certs_and_config/iot_config.json
 source ~/my-rover/ros2_ws/install/setup.bash
-ros2 run iot_controller mock_telemetry_pub
-ros2 topic echo mock_telemetry
+ros2 run iot_controller mqtt_telemetry_pub --ros-args --param path_for_config:=$IOT_CONFIG_FILE
 
-## To listen to IOT core
+eg. 
+{
+  "type": "voltage",
+  "data": 11
+}
+
+## To listen to control
 
 export IOT_CONFIG_FILE=~/my-rover/ros2_ws/iot_controller/iot_certs_and_config/iot_config.json
 source ~/my-rover/ros2_ws/install/setup.bash
 
-ros2 run iot_controller mqtt_telemetry_pub --ros-args --param path_for_config:=$IOT_CONFIG_FILE
-
 ros2 run iot_controller mqtt_control_sub --ros-args --param path_for_config:=$IOT_CONFIG_FILE
 
-
-## Test Data
+eg.
 
 {
   "linear": {

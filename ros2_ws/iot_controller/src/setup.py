@@ -22,7 +22,6 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'mock_telemetry_pub = iot_controller.mock_telemetry_publisher:main',
             'mqtt_telemetry_pub = iot_controller.mqtt_telemetry_publisher:main',
             'mqtt_control_sub = iot_controller.mqtt_control_listener:main',
         ],

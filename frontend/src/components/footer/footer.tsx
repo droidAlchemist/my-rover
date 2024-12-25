@@ -5,8 +5,6 @@ export function Footer() {
     <Box
       sx={{
         width: "100%",
-        // position: "absolute",
-        // bottom: 0,
         backgroundColor: "transparent",
       }}
       component="footer"
@@ -21,8 +19,8 @@ export function Footer() {
           }}
         >
           <Typography variant="caption" color="initial">
-            A demo project using IOT Core, Kinesis WebRTC and ROS2 custom
-            packages. Copyright © {new Date().getFullYear()}.
+            A project using ROS2 packages, IOT Core and Kinesis WebRTC to
+            control the rover. Copyright © {new Date().getFullYear()}.
           </Typography>
         </Box>
       </Container>

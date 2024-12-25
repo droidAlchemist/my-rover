@@ -10,6 +10,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
       sx={{
         px: 3,
         display: "flex",
+        minHeight: "96vh",
       }}
     >
       <Box
