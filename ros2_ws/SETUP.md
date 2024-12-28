@@ -2,26 +2,26 @@
 
 ## Install Ubuntu requirements 
 
-apt-get update 
-apt-get upgrade 
+sudo apt-get update 
+sudo apt-get upgrade 
 
-apt install python3-pip
-apt-get install alsa-utils
-apt install python3-colcon-argcomplete
+sudo apt install python3-pip
+sudo apt-get install alsa-utils
+sudo apt install python3-colcon-argcomplete
 
-apt install ros-foxy-cartographer-*
-apt install ros-foxy-desktop-*
-apt install ros-foxy-joint-state-publisher-*
-apt install ros-foxy-nav2-*
-apt install ros-foxy-rosbridge-*
-apt install ros-foxy-rqt-*
-apt install ros-foxy-rtabmap-*
-apt install ros-foxy-usb-cam
-apt install ros-foxy-depthai-*
+sudo apt install ros-$ROS_DISTRO-cartographer-*
+sudo apt install ros-$ROS_DISTRO-desktop-*
+sudo apt install ros-$ROS_DISTRO-joint-state-publisher-*
+sudo apt install ros-$ROS_DISTRO-nav2-*
+sudo apt install ros-$ROS_DISTRO-rosbridge-*
+sudo apt install ros-$ROS_DISTRO-rqt-*
+sudo apt install ros-$ROS_DISTRO-rtabmap-*
+sudo apt install ros-$ROS_DISTRO-usb-cam
+sudo apt install ros-$ROS_DISTRO-depthai-*
 
 #Simulation virtual machine installation
-apt install gazebo
-apt install ros-foxy-gazebo-*
+sudo apt install gazebo
+sudo apt install ros-$ROS_DISTRO-gazebo-*
 
 ## Install Python requirements 
 cd /home/joshua/my-rover/ros2_ws
