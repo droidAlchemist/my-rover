@@ -1,20 +1,18 @@
+#include <explore/costmap_tools.h>
 #include <explore/frontier_search.h>
 
+#include <geometry_msgs/msg/point.hpp>
 #include <mutex>
 
-#include <costmap_2d/cost_values.h>
-#include <costmap_2d/costmap_2d.h>
-#include <geometry_msgs/Point.h>
-
-#include <explore/costmap_tools.h>
+#include "nav2_costmap_2d/cost_values.hpp"
 
 namespace frontier_exploration
 {
-using costmap_2d::LETHAL_OBSTACLE;
-using costmap_2d::NO_INFORMATION;
-using costmap_2d::FREE_SPACE;
+using nav2_costmap_2d::FREE_SPACE;
+using nav2_costmap_2d::LETHAL_OBSTACLE;
+using nav2_costmap_2d::NO_INFORMATION;
 
-FrontierSearch::FrontierSearch(costmap_2d::Costmap2D* costmap,
+FrontierSearch::FrontierSearch(nav2_costmap_2d::Costmap2D* costmap,
                                double potential_scale, double gain_scale,
                                double min_frontier_size)
   : costmap_(costmap)
@@ -24,19 +22,23 @@ FrontierSearch::FrontierSearch(costmap_2d::Costmap2D* costmap,
 {
 }
 
-std::vector<Frontier> FrontierSearch::searchFrom(geometry_msgs::Point position)
+std::vector<Frontier>
+FrontierSearch::searchFrom(geometry_msgs::msg::Point position)
 {
   std::vector<Frontier> frontier_list;
 
   // Sanity check that robot is inside costmap bounds before searching
   unsigned int mx, my;
   if (!costmap_->worldToMap(position.x, position.y, mx, my)) {
-    ROS_ERROR("Robot out of costmap bounds, cannot search for frontiers");
+    RCLCPP_ERROR(rclcpp::get_logger("FrontierSearch"), "Robot out of costmap "
+                                                       "bounds, cannot search "
+                                                       "for frontiers");
     return frontier_list;
   }
 
   // make sure map is consistent and locked for duration of search
-  std::lock_guard<costmap_2d::Costmap2D::mutex_t> lock(*(costmap_->getMutex()));
+  std::lock_guard<nav2_costmap_2d::Costmap2D::mutex_t> lock(
+      *(costmap_->getMutex()));
 
   map_ = costmap_->getCharMap();
   size_x_ = costmap_->getSizeInCellsX();
@@ -55,7 +57,9 @@ std::vector<Frontier> FrontierSearch::searchFrom(geometry_msgs::Point position)
     bfs.push(clear);
   } else {
     bfs.push(pos);
-    ROS_WARN("Could not find nearby clear cell to start search");
+    RCLCPP_WARN(rclcpp::get_logger("FrontierSearch"), "Could not find nearby "
+                                                      "clear cell to start "
+                                                      "search");
   }
   visited_flag[bfs.front()] = true;
 
@@ -135,7 +139,7 @@ Frontier FrontierSearch::buildNewFrontier(unsigned int initial_cell,
         costmap_->indexToCells(nbr, mx, my);
         costmap_->mapToWorld(mx, my, wx, wy);
 
-        geometry_msgs::Point point;
+        geometry_msgs::msg::Point point;
         point.x = wx;
         point.y = wy;
         output.points.push_back(point);
@@ -194,4 +198,4 @@ double FrontierSearch::frontierCost(const Frontier& frontier)
           costmap_->getResolution()) -
          (gain_scale_ * frontier.size * costmap_->getResolution());
 }
-}
+}  // namespace frontier_exploration

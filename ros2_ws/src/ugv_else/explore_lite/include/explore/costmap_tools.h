@@ -1,10 +1,11 @@
 #ifndef COSTMAP_TOOLS_H_
 #define COSTMAP_TOOLS_H_
 
-#include <costmap_2d/costmap_2d.h>
-#include <geometry_msgs/PointStamped.h>
-#include <geometry_msgs/PolygonStamped.h>
-#include <ros/ros.h>
+#include <geometry_msgs/msg/point_stamped.hpp>
+#include <geometry_msgs/msg/polygon_stamped.hpp>
+#include <rclcpp/rclcpp.hpp>
+
+#include "nav2_costmap_2d/costmap_2d_ros.hpp"
 
 namespace frontier_exploration
 {
@@ -16,7 +17,7 @@ namespace frontier_exploration
  * @return neighbour cell indexes
  */
 std::vector<unsigned int> nhood4(unsigned int idx,
-                                 const costmap_2d::Costmap2D& costmap)
+                                 const nav2_costmap_2d::Costmap2D& costmap)
 {
   // get 4-connected neighbourhood indexes, check for edge of map
   std::vector<unsigned int> out;
@@ -25,7 +26,8 @@ std::vector<unsigned int> nhood4(unsigned int idx,
                size_y_ = costmap.getSizeInCellsY();
 
   if (idx > size_x_ * size_y_ - 1) {
-    ROS_WARN("Evaluating nhood for offmap point");
+    RCLCPP_WARN(rclcpp::get_logger("FrontierExploration"), "Evaluating nhood "
+                                                           "for offmap point");
     return out;
   }
 
@@ -52,7 +54,7 @@ std::vector<unsigned int> nhood4(unsigned int idx,
  * @return neighbour cell indexes
  */
 std::vector<unsigned int> nhood8(unsigned int idx,
-                                 const costmap_2d::Costmap2D& costmap)
+                                 const nav2_costmap_2d::Costmap2D& costmap)
 {
   // get 8-connected neighbourhood indexes, check for edge of map
   std::vector<unsigned int> out = nhood4(idx, costmap);
@@ -89,7 +91,7 @@ std::vector<unsigned int> nhood8(unsigned int idx,
  * @return True if a cell with the requested value was found
  */
 bool nearestCell(unsigned int& result, unsigned int start, unsigned char val,
-                 const costmap_2d::Costmap2D& costmap)
+                 const nav2_costmap_2d::Costmap2D& costmap)
 {
   const unsigned char* map = costmap.getCharMap();
   const unsigned int size_x = costmap.getSizeInCellsX(),
@@ -129,5 +131,5 @@ bool nearestCell(unsigned int& result, unsigned int start, unsigned char val,
 
   return false;
 }
-}
+}  // namespace frontier_exploration
 #endif

@@ -3,6 +3,7 @@
  * Software License Agreement (BSD License)
  *
  *  Copyright (c) 2015-2016, Jiri Horner.
+ *  Copyright (c) 2021, Carlos Alvarez, Juan Galvis.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -35,6 +36,7 @@
  *********************************************************************/
 
 #include <explore/costmap_client.h>
+#include <unistd.h>
 
 #include <functional>
 #include <mutex>
@@ -47,62 +49,88 @@ std::array<unsigned char, 256> init_translation_table();
 static const std::array<unsigned char, 256> cost_translation_table__ =
     init_translation_table();
 
-Costmap2DClient::Costmap2DClient(ros::NodeHandle& param_nh,
-                                 ros::NodeHandle& subscription_nh,
-                                 const tf::TransformListener* tf)
-  : tf_(tf)
+Costmap2DClient::Costmap2DClient(rclcpp::Node& node, const tf2_ros::Buffer* tf)
+  : tf_(tf), node_(node)
 {
   std::string costmap_topic;
-  std::string footprint_topic;
   std::string costmap_updates_topic;
-  param_nh.param("costmap_topic", costmap_topic, std::string("costmap"));
-  param_nh.param("costmap_updates_topic", costmap_updates_topic,
-                 std::string("costmap_updates"));
-  param_nh.param("robot_base_frame", robot_base_frame_,
-                 std::string("base_link"));
+
+  node_.declare_parameter<std::string>("costmap_topic", std::string("costmap"));
+  node_.declare_parameter<std::string>("costmap_updates_topic",
+                                       std::string("costmap_updates"));
+  node_.declare_parameter<std::string>("robot_base_frame", std::string("base_"
+                                                                       "link"));
   // transform tolerance is used for all tf transforms here
-  param_nh.param("transform_tolerance", transform_tolerance_, 0.3);
+  node_.declare_parameter<double>("transform_tolerance", 0.3);
+
+  node_.get_parameter("costmap_topic", costmap_topic);
+  node_.get_parameter("costmap_updates_topic", costmap_updates_topic);
+  node_.get_parameter("robot_base_frame", robot_base_frame_);
+  node_.get_parameter("transform_tolerance", transform_tolerance_);
 
   /* initialize costmap */
-  costmap_sub_ = subscription_nh.subscribe<nav_msgs::OccupancyGrid>(
+  costmap_sub_ = node_.create_subscription<nav_msgs::msg::OccupancyGrid>(
       costmap_topic, 1000,
-      [this](const nav_msgs::OccupancyGrid::ConstPtr& msg) {
+      [this](const nav_msgs::msg::OccupancyGrid::SharedPtr msg) {
+        costmap_received_ = true;
         updateFullMap(msg);
       });
-  ROS_INFO("Waiting for costmap to become available, topic: %s",
-           costmap_topic.c_str());
-  auto costmap_msg = ros::topic::waitForMessage<nav_msgs::OccupancyGrid>(
-      costmap_topic, subscription_nh);
-  updateFullMap(costmap_msg);
+
+  // ROS1 CODE
+  // auto costmap_msg =
+  // ros::topic::waitForMessage<nav_msgs::msg::OccupancyGrid>(
+  //     costmap_topic, subscription_nh);
+
+  // Spin some until the callback gets called to replicate
+  // ros::topic::waitForMessage
+  RCLCPP_INFO(node_.get_logger(),
+              "Waiting for costmap to become available, topic: %s",
+              costmap_topic.c_str());
+  while (!costmap_received_) {
+    rclcpp::spin_some(node_.get_node_base_interface());
+    // Wait for a second
+    usleep(1000000);
+  }
+  // updateFullMap(costmap_msg); // this is already called in the callback of
+  // the costmap_sub_
 
   /* subscribe to map updates */
   costmap_updates_sub_ =
-      subscription_nh.subscribe<map_msgs::OccupancyGridUpdate>(
+      node_.create_subscription<map_msgs::msg::OccupancyGridUpdate>(
           costmap_updates_topic, 1000,
-          [this](const map_msgs::OccupancyGridUpdate::ConstPtr& msg) {
+          [this](const map_msgs::msg::OccupancyGridUpdate::SharedPtr msg) {
             updatePartialMap(msg);
           });
 
+  // ROS1 CODE.
+  // TODO: Do we need this?
   /* resolve tf prefix for robot_base_frame */
-  std::string tf_prefix = tf::getPrefixParam(param_nh);
-  robot_base_frame_ = tf::resolve(tf_prefix, robot_base_frame_);
+  // std::string tf_prefix = tf::getPrefixParam(node_);
+  // robot_base_frame_ = tf::resolve(tf_prefix, robot_base_frame_);
 
   // we need to make sure that the transform between the robot base frame and
   // the global frame is available
+
+  // the global frame is set in the costmap callback. This is why we need to
+  // ensure that a costmap is received
+
   /* tf transform is necessary for getRobotPose */
-  ros::Time last_error = ros::Time::now();
+  auto last_error = node_.now();
   std::string tf_error;
-  while (ros::ok() &&
-         !tf_->waitForTransform(global_frame_, robot_base_frame_, ros::Time(),
-                                ros::Duration(0.1), ros::Duration(0.01),
-                                &tf_error)) {
-    ros::spinOnce();
-    if (last_error + ros::Duration(5.0) < ros::Time::now()) {
-      ROS_WARN(
-          "Timed out waiting for transform from %s to %s to become available "
-          "before subscribing to costmap, tf error: %s",
-          robot_base_frame_.c_str(), global_frame_.c_str(), tf_error.c_str());
-      last_error = ros::Time::now();
+  while (rclcpp::ok() &&
+         !tf_->canTransform(global_frame_, robot_base_frame_,
+                            tf2::TimePointZero, tf2::durationFromSec(0.1),
+                            &tf_error)) {
+    rclcpp::spin_some(node_.get_node_base_interface());
+    if (last_error + tf2::durationFromSec(5.0) < node_.now()) {
+      RCLCPP_WARN(node_.get_logger(),
+                  "Timed out waiting for transform from %s to %s to become "
+                  "available "
+                  "before subscribing to costmap, tf error: %s",
+                  robot_base_frame_.c_str(), global_frame_.c_str(),
+                  tf_error.c_str());
+      last_error = node_.now();
+      ;
     }
     // The error string will accumulate and errors will typically be the same,
     // so the last
@@ -112,7 +140,8 @@ Costmap2DClient::Costmap2DClient(ros::NodeHandle& param_nh,
   }
 }
 
-void Costmap2DClient::updateFullMap(const nav_msgs::OccupancyGrid::ConstPtr& msg)
+void Costmap2DClient::updateFullMap(
+    const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
 {
   global_frame_ = msg->header.frame_id;
 
@@ -122,35 +151,37 @@ void Costmap2DClient::updateFullMap(const nav_msgs::OccupancyGrid::ConstPtr& msg
   double origin_x = msg->info.origin.position.x;
   double origin_y = msg->info.origin.position.y;
 
-  ROS_DEBUG("received full new map, resizing to: %d, %d", size_in_cells_x,
-            size_in_cells_y);
+  RCLCPP_DEBUG(node_.get_logger(), "received full new map, resizing to: %d, %d",
+               size_in_cells_x, size_in_cells_y);
   costmap_.resizeMap(size_in_cells_x, size_in_cells_y, resolution, origin_x,
                      origin_y);
 
   // lock as we are accessing raw underlying map
   auto* mutex = costmap_.getMutex();
-  std::lock_guard<costmap_2d::Costmap2D::mutex_t> lock(*mutex);
+  std::lock_guard<nav2_costmap_2d::Costmap2D::mutex_t> lock(*mutex);
 
   // fill map with data
   unsigned char* costmap_data = costmap_.getCharMap();
   size_t costmap_size = costmap_.getSizeInCellsX() * costmap_.getSizeInCellsY();
-  ROS_DEBUG("full map update, %lu values", costmap_size);
+  RCLCPP_DEBUG(node_.get_logger(), "full map update, %lu values", costmap_size);
   for (size_t i = 0; i < costmap_size && i < msg->data.size(); ++i) {
     unsigned char cell_cost = static_cast<unsigned char>(msg->data[i]);
     costmap_data[i] = cost_translation_table__[cell_cost];
   }
-  ROS_DEBUG("map updated, written %lu values", costmap_size);
+  RCLCPP_DEBUG(node_.get_logger(), "map updated, written %lu values",
+               costmap_size);
 }
 
 void Costmap2DClient::updatePartialMap(
-    const map_msgs::OccupancyGridUpdate::ConstPtr& msg)
+    const map_msgs::msg::OccupancyGridUpdate::SharedPtr msg)
 {
-  ROS_DEBUG("received partial map update");
+  RCLCPP_DEBUG(node_.get_logger(), "received partial map update");
   global_frame_ = msg->header.frame_id;
 
   if (msg->x < 0 || msg->y < 0) {
-    ROS_ERROR("negative coordinates, invalid update. x: %d, y: %d", msg->x,
-              msg->y);
+    RCLCPP_DEBUG(node_.get_logger(),
+                 "negative coordinates, invalid update. x: %d, y: %d", msg->x,
+                 msg->y);
     return;
   }
 
@@ -161,17 +192,18 @@ void Costmap2DClient::updatePartialMap(
 
   // lock as we are accessing raw underlying map
   auto* mutex = costmap_.getMutex();
-  std::lock_guard<costmap_2d::Costmap2D::mutex_t> lock(*mutex);
+  std::lock_guard<nav2_costmap_2d::Costmap2D::mutex_t> lock(*mutex);
 
   size_t costmap_xn = costmap_.getSizeInCellsX();
   size_t costmap_yn = costmap_.getSizeInCellsY();
 
   if (xn > costmap_xn || x0 > costmap_xn || yn > costmap_yn ||
       y0 > costmap_yn) {
-    ROS_WARN("received update doesn't fully fit into existing map, "
-             "only part will be copied. received: [%lu, %lu], [%lu, %lu] "
-             "map is: [0, %lu], [0, %lu]",
-             x0, xn, y0, yn, costmap_xn, costmap_yn);
+    RCLCPP_WARN(node_.get_logger(),
+                "received update doesn't fully fit into existing map, "
+                "only part will be copied. received: [%lu, %lu], [%lu, %lu] "
+                "map is: [0, %lu], [0, %lu]",
+                x0, xn, y0, yn, costmap_xn, costmap_yn);
   }
 
   // update map with data
@@ -187,47 +219,42 @@ void Costmap2DClient::updatePartialMap(
   }
 }
 
-geometry_msgs::Pose Costmap2DClient::getRobotPose() const
+geometry_msgs::msg::Pose Costmap2DClient::getRobotPose() const
 {
-  tf::Stamped<tf::Pose> global_pose;
-  global_pose.setIdentity();
-  tf::Stamped<tf::Pose> robot_pose;
-  robot_pose.setIdentity();
-  robot_pose.frame_id_ = robot_base_frame_;
-  robot_pose.stamp_ = ros::Time();
-  ros::Time current_time =
-      ros::Time::now();  // save time for checking tf delay later
+  geometry_msgs::msg::PoseStamped robot_pose;
+  geometry_msgs::msg::Pose empty_pose;
+  robot_pose.header.frame_id = robot_base_frame_;
+  robot_pose.header.stamp = node_.now();
+
+  auto& clk = *node_.get_clock();
 
   // get the global pose of the robot
   try {
-    tf_->transformPose(global_frame_, robot_pose, global_pose);
-  } catch (tf::LookupException& ex) {
-    ROS_ERROR_THROTTLE(1.0, "No Transform available Error looking up robot "
-                            "pose: %s\n",
-                       ex.what());
-    return {};
-  } catch (tf::ConnectivityException& ex) {
-    ROS_ERROR_THROTTLE(1.0, "Connectivity Error looking up robot pose: %s\n",
-                       ex.what());
-    return {};
-  } catch (tf::ExtrapolationException& ex) {
-    ROS_ERROR_THROTTLE(1.0, "Extrapolation Error looking up robot pose: %s\n",
-                       ex.what());
-    return {};
-  }
-  // check global_pose timeout
-  if (current_time.toSec() - global_pose.stamp_.toSec() >
-      transform_tolerance_) {
-    ROS_WARN_THROTTLE(1.0, "Costmap2DClient transform timeout. Current time: "
-                           "%.4f, global_pose stamp: %.4f, tolerance: %.4f",
-                      current_time.toSec(), global_pose.stamp_.toSec(),
-                      transform_tolerance_);
-    return {};
+    robot_pose = tf_->transform(robot_pose, global_frame_,
+                                tf2::durationFromSec(transform_tolerance_));
+  } catch (tf2::LookupException& ex) {
+    RCLCPP_ERROR_THROTTLE(node_.get_logger(), clk, 1000,
+                          "No Transform available Error looking up robot pose: "
+                          "%s\n",
+                          ex.what());
+    return empty_pose;
+  } catch (tf2::ConnectivityException& ex) {
+    RCLCPP_ERROR_THROTTLE(node_.get_logger(), clk, 1000,
+                          "Connectivity Error looking up robot pose: %s\n",
+                          ex.what());
+    return empty_pose;
+  } catch (tf2::ExtrapolationException& ex) {
+    RCLCPP_ERROR_THROTTLE(node_.get_logger(), clk, 1000,
+                          "Extrapolation Error looking up robot pose: %s\n",
+                          ex.what());
+    return empty_pose;
+  } catch (tf2::TransformException& ex) {
+    RCLCPP_ERROR_THROTTLE(node_.get_logger(), clk, 1000, "Other error: %s\n",
+                          ex.what());
+    return empty_pose;
   }
 
-  geometry_msgs::PoseStamped msg;
-  tf::poseStampedTFToMsg(global_pose, msg);
-  return msg.pose;
+  return robot_pose.pose;
 }
 
 std::array<unsigned char, 256> init_translation_table()

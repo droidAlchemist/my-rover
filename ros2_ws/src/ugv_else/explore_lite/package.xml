@@ -1,34 +1,33 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>explore_lite</name>
-  <version>2.1.4</version>
+  <version>1.0.0</version>
 
-  <description>Lightweight frontier-based exploration.</description>
+  <description>Lightweight frontier-based exploration ROS2 port.</description>
 
-  <author email="laeqten@gmail.com">Jiri Horner</author>
-  <maintainer email="laeqten@gmail.com">Jiri Horner</maintainer>
+  <author email="candres.alv@gmail.com">Carlos Alvarez</author>
+  <maintainer email="candres.alv@gmail.com">Carlos Alvarez</maintainer>
   <license>BSD</license>
-  <url>http://wiki.ros.org/explore_lite</url>
 
-  <!-- acknowledgements
-  <author>Charles DuHadway</author>
-  <url>http://ros.org/wiki/explore</url>
-  <author>Paul Bovbel</author>
-  <url>https://github.com/paulbovbel/frontier_exploration</url>
-  -->
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>roscpp</depend>
-  <depend>std_msgs</depend>
-  <depend>move_base_msgs</depend>
-  <depend>visualization_msgs</depend>
-  <depend>geometry_msgs</depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <depend>ament_cmake</depend>
   <depend>map_msgs</depend>
+  <depend>nav2_costmap_2d</depend>
+  <depend>nav2_msgs</depend>
   <depend>nav_msgs</depend>
-  <depend>actionlib_msgs</depend>
-  <depend>tf</depend>
-  <depend>costmap_2d</depend>
-  <depend>actionlib</depend>
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>visualization_msgs</depend>
 
-  <test_depend>roslaunch</test_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>

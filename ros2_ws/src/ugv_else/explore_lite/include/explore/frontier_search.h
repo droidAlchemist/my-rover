@@ -1,7 +1,7 @@
 #ifndef FRONTIER_SEARCH_H_
 #define FRONTIER_SEARCH_H_
 
-#include <costmap_2d/costmap_2d.h>
+#include "nav2_costmap_2d/costmap_2d_ros.hpp"
 
 namespace frontier_exploration
 {
@@ -13,10 +13,10 @@ struct Frontier {
   std::uint32_t size;
   double min_distance;
   double cost;
-  geometry_msgs::Point initial;
-  geometry_msgs::Point centroid;
-  geometry_msgs::Point middle;
-  std::vector<geometry_msgs::Point> points;
+  geometry_msgs::msg::Point initial;
+  geometry_msgs::msg::Point centroid;
+  geometry_msgs::msg::Point middle;
+  std::vector<geometry_msgs::msg::Point> points;
 };
 
 /**
@@ -34,7 +34,7 @@ public:
    * @brief Constructor for search task
    * @param costmap Reference to costmap data to search.
    */
-  FrontierSearch(costmap_2d::Costmap2D* costmap, double potential_scale,
+  FrontierSearch(nav2_costmap_2d::Costmap2D* costmap, double potential_scale,
                  double gain_scale, double min_frontier_size);
 
   /**
@@ -42,7 +42,7 @@ public:
    * @param position Initial position to search from
    * @return List of frontiers, if any
    */
-  std::vector<Frontier> searchFrom(geometry_msgs::Point position);
+  std::vector<Frontier> searchFrom(geometry_msgs::msg::Point position);
 
 protected:
   /**
@@ -78,11 +78,11 @@ protected:
   double frontierCost(const Frontier& frontier);
 
 private:
-  costmap_2d::Costmap2D* costmap_;
+  nav2_costmap_2d::Costmap2D* costmap_;
   unsigned char* map_;
   unsigned int size_x_, size_y_;
   double potential_scale_, gain_scale_;
   double min_frontier_size_;
 };
-}
+}  // namespace frontier_exploration
 #endif
