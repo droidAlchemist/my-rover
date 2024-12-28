@@ -48,7 +48,10 @@ line 28 add: #include <pthread.h>
 
 ## costmap converter error
 http://wiki.ros.org/costmap_converter
+downloaded and replaced existing package
 
+## explore_lite ubuntu 24 fixes
+https://github.com/hrnr/m-explore
 
 
 ## Compile apriltag
