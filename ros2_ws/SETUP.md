@@ -9,18 +9,18 @@ sudo apt install python3-pip
 sudo apt-get install alsa-utils
 sudo apt install python3-colcon-argcomplete
 
-sudo apt install ros-$ROS_DISTRO-cartographer-*
-sudo apt install ros-$ROS_DISTRO-desktop-*
-sudo apt install ros-$ROS_DISTRO-joint-state-publisher-*
-sudo apt install ros-$ROS_DISTRO-nav2-*
-sudo apt install ros-$ROS_DISTRO-rosbridge-*
-sudo apt install ros-$ROS_DISTRO-rqt-*
-sudo apt install ros-$ROS_DISTRO-rtabmap-*
-sudo apt install ros-$ROS_DISTRO-usb-cam
-sudo apt install ros-$ROS_DISTRO-depthai-*
+sudo apt install ros-$ROS_DISTRO-cartographer-* -y
+sudo apt install ros-$ROS_DISTRO-desktop-* -y
+sudo apt install ros-$ROS_DISTRO-joint-state-publisher-* -y
+sudo apt install ros-$ROS_DISTRO-nav2-* -y
+sudo apt install ros-$ROS_DISTRO-rosbridge-* -y
+sudo apt install ros-$ROS_DISTRO-rqt-* -y
+sudo apt install ros-$ROS_DISTRO-rtabmap-* -y
+sudo apt install ros-$ROS_DISTRO-usb-cam -y
+sudo apt install ros-$ROS_DISTRO-depthai-* -y
 
 #Simulation virtual machine installation
-sudo apt install gazebo
+sudo apt install gazebo (failed - not found on ubuntu 24.04)
 sudo apt install ros-$ROS_DISTRO-gazebo-*
 
 ## Install Python requirements 
@@ -28,6 +28,18 @@ cd /home/joshua/my-rover/ros2_ws
 python3 -m pip install -r requirements.txt 
 (optional --break-system-packages)
 
+## emcl2
+cd ros2_ws/src/ugv_else/em
+rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
+
+## ldlidar build error
+https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2/pull/24/files 
+ldlidar_driver/src/logger/log_module.cpp
+line 28 add: #include <pthread.h>
+
+## Compile apriltag
+cd /home/joshua/my-rover/ros2_ws
+. build_apriltag.sh
 
 ## First Build
 cd /home/joshua/my-rover/ros2_ws
@@ -37,10 +49,6 @@ cd /home/joshua/my-rover/ros2_ws
 
 cd /home/joshua/my-rover/ros2_ws
 . build_common.sh
-
-## Compile apriltag
-cd /home/joshua/my-rover/ros2_ws
-. build_apriltag.sh
 
 # RPI 5 - Enable UART / Serial port ttyAMA0
 
