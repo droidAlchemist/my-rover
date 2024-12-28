@@ -1,35 +1,13 @@
-# Steps to setup UGV wave rover
+# Steps to start UGV wave rover
 
-## Install requirements 
-
-python3 -m pip install -r requirements.txt --break-system-packages
-
-## Enable UART / Serial port ttyAMA0
-
-sudo nano /boot/firmware/config.txt
-[all]
-enable_uart=1
-dtoverlay=uart0
-
-### AMA0 permission denied fix
-
-sudo gpasswd --add ${USER} dialout
-
-ls /dev/ttyA*
-
-## Execute build script
-
-
-
-## Drive the car (can control the pan/tilt and LED lights)
-
-ros2 run ugv_bringup ugv_driver
-
-
-## Launch bringup 
+## Launch bringup (complete drivers are launched)
 
 ros2 launch ugv_bringup bringup_rover.launch.py 
 
+## The individual modules can be run by executing below commands
+## Drive the car 
+
+ros2 run ugv_bringup ugv_driver
 
 
 ## Behavior control
