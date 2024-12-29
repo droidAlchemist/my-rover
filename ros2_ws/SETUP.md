@@ -30,7 +30,7 @@ python3 -m pip install -r requirements.txt
 
 ## Compile apriltag
 cd /home/joshua/my-rover/ros2_ws
-. build_apriltag.sh
+sudo bash build_apriltag.sh
 
 ## First Build
 cd /home/joshua/my-rover/ros2_ws

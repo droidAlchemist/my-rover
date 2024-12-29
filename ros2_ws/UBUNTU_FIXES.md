@@ -28,14 +28,14 @@ line 28 add: #include <pthread.h>
 http://wiki.ros.org/costmap_converter
 downloaded and replaced existing package
 
-## explore_lite ubuntu 24 fixes
+## explore_lite 
 https://github.com/hrnr/m-explore
 did not work
 
 https://github.com/robo-friends/m-explore-ros2/tree/main/explore
 download and copied explore folder as explore_lite
 
-## ros april tag ubuntu 24 fixes
+## ros april tag 
 apriltag_ros/include/AprilTagNode.hpp:40:10: fatal error: cv_bridge/cv_bridge.h
 change to cv_bridge/cv_bridge.hpp
 
@@ -46,6 +46,10 @@ image_geometry/pinhole_camera_model.h
 https://github.com/christianrauch/apriltag_msgs 
 Try switching to new packages by Christian rauch -> apriltag_ros, apriltag_msgs
 
-## slam_gmapping ubuntu 24 fixes
+## slam_gmapping 
 ugv_else/gmapping/slam_gmapping/include/slam_gmapping/slam_gmapping.h  line 38
 Move it to tf2_geometry_msgs.hpp instead.
+
+## teb_local_planner
+https://github.com/rst-tu-dortmund/teb_local_planner/tree/ros2-master
+donwload and replace existing package from source ros2 branch

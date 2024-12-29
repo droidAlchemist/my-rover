@@ -2,12 +2,19 @@
 
 ## Launch bringup (complete drivers are launched)
 
+export UGV_MODEL=ugv_rover
 ros2 launch ugv_bringup bringup_rover.launch.py 
 
 ## The individual modules can be run by executing below commands
 ## Drive the car 
 
 ros2 run ugv_bringup ugv_driver
+
+## other
+ros2 run ugv_bringup ugv_bringup
+
+To echo topics
+ros2 topic list
 
 
 ## Behavior control
