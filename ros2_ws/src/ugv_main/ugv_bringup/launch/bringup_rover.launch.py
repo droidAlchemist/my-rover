@@ -75,7 +75,7 @@ def generate_launch_description():
         robot_state_launch,
         bringup_node,
         driver_node,
-        laser_bringup_launch,
-        rf2o_laser_odometry_launch,
+        # laser_bringup_launch,
+        # rf2o_laser_odometry_launch,
         base_node
     ])
