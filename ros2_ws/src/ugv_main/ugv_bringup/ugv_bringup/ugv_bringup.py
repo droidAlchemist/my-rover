@@ -108,17 +108,14 @@ class ugv_bringup(Node):
         # Initialize the base controller with the UART port and baud rate
         self.base_controller = BaseController(serial_port, 115200)
         # Timer to periodically execute the feedback loop
-        # self.feedback_timer = self.create_timer(0.001, self.feedback_loop)
-        # increase to 10 sec
-        self.feedback_timer = self.create_timer(10, self.feedback_loop)
+        self.feedback_timer = self.create_timer(0.001, self.feedback_loop)
 
     # Main loop for reading sensor feedback and publishing it to ROS topics
     def feedback_loop(self):
-        self.get_logger().info("Feedback - get data")        
         self.base_controller.feedback_data()
-        self.get_logger().info("Received Feedback data - {}".format(self.base_controller.base_data))
         if self.base_controller.base_data["T"] == 1001:  # Check if the feedback type is correct
             self.get_logger().info("Feedback - publish data")
+            self.get_logger().info("Received Feedback data - {}".format(self.base_controller.base_data))            
             self.publish_imu_data_raw()  # Publish IMU raw data
             self.publish_imu_mag()  # Publish magnetic field data
             self.publish_odom_raw()  # Publish odometry data

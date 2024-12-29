@@ -6,12 +6,8 @@ serial_port = '/dev/ttyAMA0'
 ser = serial.Serial(serial_port, 115200, timeout=1)
 
 def main():
-    led_ctrl_data = json.dumps({
-            'T': 131, 
-            "cmd": 0
-        }) + "\n"
-                
-    ser.write(led_ctrl_data.encode())    
+    ctrl_data = json.dumps({"T":131,"cmd":0}) + "\n"            
+    ser.write(ctrl_data.encode())    
     ser.close()
 
 
