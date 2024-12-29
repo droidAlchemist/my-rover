@@ -74,65 +74,59 @@ export const ControlPage = () => {
       sx={{ display: "flex", flexDirection: "column", position: "relative" }}
     >
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <TelemetryCard
-            gradientColor="linear-gradient(310deg, #a8ff78, #11cdef)"
-            icon={<Assessment />}
-            data={{
-              voltage: voltageData,
-              odometry: odometryData,
-            }}
-          />
+        <Grid size={{ xs: 9 }}>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+              <StatusInfoCard
+                title="LED Light"
+                count="OFF"
+                gradientColor="linear-gradient(310deg, #fb6340, #fbb140)"
+                activeStatus={false}
+                onAction={onClickLed}
+                icon={<FlashlightOn />}
+                percentage={{
+                  color: "#F0000F",
+                  count: "55%",
+                  text: "battery remaining.",
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+              <StatusInfoCard
+                title="Camera 1"
+                count="OFF"
+                gradientColor="linear-gradient(310deg,#8A2387,#FF0080)"
+                activeStatus={false}
+                onAction={onClickCamera}
+                icon={<Camera />}
+                percentage={{
+                  color: "#F0000F",
+                  count: "x=1 y=1",
+                  text: " Pose",
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+              <StatusInfoCard
+                title="LIDAR"
+                count="OFF"
+                gradientColor="linear-gradient(310deg,#1171ef,#11cdef)"
+                activeStatus={false}
+                icon={<Navigation />}
+                percentage={{
+                  color: "error",
+                  count: "Unavailable!",
+                  text: "Please check wiring",
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              {/* Show video data using kinesis from ROS2 */}
+              <VideoStreaming />
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <StatusInfoCard
-            title="LED Light"
-            count="OFF"
-            gradientColor="linear-gradient(310deg, #fb6340, #fbb140)"
-            activeStatus={false}
-            onAction={onClickLed}
-            icon={<FlashlightOn />}
-            percentage={{
-              color: "#F0000F",
-              count: "55%",
-              text: "battery remaining.",
-            }}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <StatusInfoCard
-            title="Camera 1"
-            count="OFF"
-            gradientColor="linear-gradient(310deg,#8A2387,#FF0080)"
-            activeStatus={false}
-            onAction={onClickCamera}
-            icon={<Camera />}
-            percentage={{
-              color: "#F0000F",
-              count: "x=1 y=1",
-              text: " Pose",
-            }}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <StatusInfoCard
-            title="LIDAR"
-            count="OFF"
-            gradientColor="linear-gradient(310deg,#1171ef,#11cdef)"
-            activeStatus={false}
-            icon={<Navigation />}
-            percentage={{
-              color: "error",
-              count: "Unavailable!",
-              text: "Please check wiring",
-            }}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 10, lg: 9 }}>
-          {/* Show video data using kinesis from ROS2 */}
-          <VideoStreaming />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+        <Grid size={{ xs: 3 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <TelemetryCard
               gradientColor="linear-gradient(310deg, #a8ff78, #11cdef)"
@@ -142,10 +136,10 @@ export const ControlPage = () => {
                 odometry: odometryData,
               }}
             />
-            {/* Control robot by sending x,z pos using IOT Core to ROS2 */}
-            <RobotControllerCard connection={connection} />
             {/* Show Lidar data */}
             <LidarCard image="lidar.jpg" />
+            {/* Control robot by sending x,z pos using IOT Core to ROS2 */}
+            <RobotControllerCard connection={connection} />
           </Box>
         </Grid>
       </Grid>
