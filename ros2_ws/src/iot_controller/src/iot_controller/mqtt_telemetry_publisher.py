@@ -24,19 +24,19 @@ class MqttPublisher(Node):
         self.init_subs()
 
     def init_subs(self):
-        """Subscribe to ros2 ugv topics"""
+        """Subscribe to ros2 topics"""
         self.create_subscription(
             Float32,
-            'voltage',
+            '/voltage',
             self.voltage_listener_callback,
             10
         )
          # Create a subscription to the /odom topic to get the odometry data
-        self.create_subscription(Odometry, 'odom', self.odom_callback, 10)
+        self.create_subscription(Odometry, '/odom/odom_raw', self.odom_callback, 10)
         # Create a subscription to the /imu/data topic to get the robot's imu data
         self.create_subscription(
             Imu,
-            'imu/data',
+            'imu/data_raw',
             self.robot_imu_callback,
             10
         )

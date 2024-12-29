@@ -114,8 +114,11 @@ class ugv_bringup(Node):
 
     # Main loop for reading sensor feedback and publishing it to ROS topics
     def feedback_loop(self):
+        self.get_logger().info("Feedback - get data")        
         self.base_controller.feedback_data()
+        self.get_logger().info("Received Feedback data - {}".format(self.base_controller.base_data))
         if self.base_controller.base_data["T"] == 1001:  # Check if the feedback type is correct
+            self.get_logger().info("Feedback - publish data")
             self.publish_imu_data_raw()  # Publish IMU raw data
             self.publish_imu_mag()  # Publish magnetic field data
             self.publish_odom_raw()  # Publish odometry data
