@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import {
   Assessment,
   Camera,
@@ -70,9 +70,11 @@ export const ControlPage = () => {
   }, [connection]);
 
   return (
-    <Box sx={{ position: "relative" }}>
-      <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} md={6} lg={3}>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", position: "relative" }}
+    >
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
           <TelemetryCard
             gradientColor="linear-gradient(310deg, #a8ff78, #11cdef)"
             icon={<Assessment />}
@@ -82,7 +84,7 @@ export const ControlPage = () => {
             }}
           />
         </Grid>
-        <Grid item xs={12} md={6} lg={3}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
           <StatusInfoCard
             title="LED Light"
             count="OFF"
@@ -97,7 +99,7 @@ export const ControlPage = () => {
             }}
           />
         </Grid>
-        <Grid item xs={12} md={6} lg={3}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
           <StatusInfoCard
             title="Camera 1"
             count="OFF"
@@ -112,7 +114,7 @@ export const ControlPage = () => {
             }}
           />
         </Grid>
-        <Grid item xs={12} md={6} lg={3}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
           <StatusInfoCard
             title="LIDAR"
             count="OFF"
@@ -126,16 +128,25 @@ export const ControlPage = () => {
             }}
           />
         </Grid>
-      </Grid>
-      <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} lg={9}>
+        <Grid size={{ xs: 12, md: 10, lg: 9 }}>
           {/* Show video data using kinesis from ROS2 */}
           <VideoStreaming />
         </Grid>
-        <Grid item xs={12} lg={3}>
-          <LidarCard image="lidar.jpg" />
-          {/* Control robot by sending x,z pos using IOT Core to ROS2 */}
-          <RobotControllerCard connection={connection} />
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <TelemetryCard
+              gradientColor="linear-gradient(310deg, #a8ff78, #11cdef)"
+              icon={<Assessment />}
+              data={{
+                voltage: voltageData,
+                odometry: odometryData,
+              }}
+            />
+            {/* Control robot by sending x,z pos using IOT Core to ROS2 */}
+            <RobotControllerCard connection={connection} />
+            {/* Show Lidar data */}
+            <LidarCard image="lidar.jpg" />
+          </Box>
         </Grid>
       </Grid>
     </Box>

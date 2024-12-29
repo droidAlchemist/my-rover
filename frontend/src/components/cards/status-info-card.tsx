@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import { ReactNode, useState } from "react";
 import { IOSSwitch } from "../basic-components";
 
@@ -47,7 +47,7 @@ export function StatusInfoCard({
       <Box sx={{ bgcolor: "white", color: "#344767" }}>
         <Box p={2}>
           <Grid container>
-            <Grid item xs={8}>
+            <Grid size={{ xs: 8 }}>
               <Box
                 sx={{
                   lineHeight: 1,
@@ -81,7 +81,7 @@ export function StatusInfoCard({
                 </Typography>
               </Box>
             </Grid>
-            <Grid item xs={4}>
+            <Grid size={{ xs: 4 }}>
               <Box
                 sx={{
                   width: "3rem",

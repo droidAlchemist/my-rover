@@ -1,15 +1,15 @@
 import { Box } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import { BasicTable } from "@/components";
 
 export const LogPage = () => {
   return (
     <Box sx={{ position: "relative" }}>
-      <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} md={6} lg={8}>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 8 }}>
           <BasicTable />
         </Grid>
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid size={{ xs: 4 }}>
           <BasicTable />
         </Grid>
       </Grid>

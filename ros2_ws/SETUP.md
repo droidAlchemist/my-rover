@@ -28,32 +28,6 @@ cd /home/joshua/my-rover/ros2_ws
 python3 -m pip install -r requirements.txt 
 (optional --break-system-packages)
 
-## emcl2_ros2 Ubuntu 24.04 fixes
-cd ros2_ws/src/ugv_else/em
-rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
-https://github.com/CIT-Autonomous-Robot-Lab/emcl2_ros2/pull/59/files
-Add to below files:
-include/emcl2/Pose.h: line 9
-include/emcl2/Scan.h: line 9
-#include <cstdint>
-
-src/emcl2_node.cpp: line 129
-std::shared_ptr<LikelihoodFieldMap> map = initMap();
-std::shared_ptr<OdomModel> om = initOdometry();
-
-## ldlidar build error
-https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2/pull/24/files 
-ldlidar_driver/src/logger/log_module.cpp
-line 28 add: #include <pthread.h>
-
-## costmap converter error
-http://wiki.ros.org/costmap_converter
-downloaded and replaced existing package
-
-## explore_lite ubuntu 24 fixes
-https://github.com/hrnr/m-explore
-
-
 ## Compile apriltag
 cd /home/joshua/my-rover/ros2_ws
 . build_apriltag.sh

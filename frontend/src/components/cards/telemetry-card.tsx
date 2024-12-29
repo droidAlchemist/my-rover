@@ -1,7 +1,7 @@
 import { IotSensorMessageType } from "@/types";
 import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import { ReactNode } from "react";
 
 interface OdometryCardProps {
@@ -26,7 +26,7 @@ export function TelemetryCard({
       <Box sx={{ bgcolor: "white", color: "#344767" }}>
         <Box p={2}>
           <Grid container>
-            <Grid item xs={10}>
+            <Grid size={{ xs: 10 }}>
               <Box
                 sx={{
                   lineHeight: 1,
@@ -50,36 +50,36 @@ export function TelemetryCard({
                   Telemetry
                 </Typography>
                 <Grid container sx={{ gap: 1 }}>
-                  <Grid item xs={5}>
+                  <Grid size={{ xs: 5 }}>
                     {renderTypographyItem(
                       "Velocity",
                       data?.odometry?.twist?.linear?.x,
                       "m/s",
                     )}
                   </Grid>
-                  <Grid item xs={5}>
+                  <Grid size={{ xs: 5 }}>
                     {renderTypographyItem(
                       "Ang. Velocity",
                       data?.odometry?.twist?.angular?.z,
                       "m/s",
                     )}
                   </Grid>
-                  <Grid item xs={5}>
+                  <Grid size={{ xs: 5 }}>
                     {renderTypographyItem("Voltage", data?.voltage, "V")}
                   </Grid>
-                  <Grid item xs={5}>
+                  <Grid size={{ xs: 5 }}>
                     {renderTypographyItem("IMU", "_ ")}
                   </Grid>
-                  <Grid item xs={5}>
+                  <Grid size={{ xs: 5 }}>
                     {renderTypographyItem("Status", undefined)}
                   </Grid>
-                  <Grid item xs={5}>
+                  <Grid size={{ xs: 5 }}>
                     {renderTypographyItem("Direction", undefined)}
                   </Grid>
                 </Grid>
               </Box>
             </Grid>
-            <Grid item xs={2}>
+            <Grid size={{ xs: 2 }}>
               <Box
                 sx={{
                   width: "3rem",

@@ -29,7 +29,6 @@ export function RobotControllerCard({ connection }: RobotControllerCardProps) {
       sx={{
         display: "flex",
         flexDirection: "column",
-        mt: 4,
         alignItems: "center",
       }}
     >
