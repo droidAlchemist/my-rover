@@ -45,19 +45,20 @@ def generate_launch_description():
         executable='ugv_driver',
     )
 
-    # Include laser lidar launch file
-    laser_bringup_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('ldlidar'), 'launch', 'ldlidar.launch.py')
-        )
-    )
+    # lidar device not available, so disabled for now
+    # # Include laser lidar launch file
+    # laser_bringup_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(get_package_share_directory('ldlidar'), 'launch', 'ldlidar.launch.py')
+    #     )
+    # )
 
-    # Include laser odometry launch file
-    rf2o_laser_odometry_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('rf2o_laser_odometry'), 'launch', 'rf2o_laser_odometry.launch.py')
-        )
-    )
+    # # Include laser odometry launch file
+    # rf2o_laser_odometry_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(get_package_share_directory('rf2o_laser_odometry'), 'launch', 'rf2o_laser_odometry.launch.py')
+    #     )
+    # )
 
     # Define the base node with parameters
     base_node = Node(
