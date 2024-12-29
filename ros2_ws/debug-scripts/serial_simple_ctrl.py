@@ -16,8 +16,8 @@ def main():
     args = parser.parse_args()
 
     ser = serial.Serial(args.port, baudrate=115200, dsrdtr=None)
-    ser.setRTS(False)
-    ser.setDTR(False)
+    ser.setRTS(True)
+    ser.setDTR(True)
 
     serial_recv_thread = threading.Thread(target=read_serial)
     serial_recv_thread.daemon = True
