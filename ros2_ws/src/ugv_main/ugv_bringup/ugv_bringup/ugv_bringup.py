@@ -110,7 +110,7 @@ class ugv_bringup(Node):
         self.base_controller = BaseController(serial_port, 115200)
         # Timer to periodically execute the feedback loop
         # self.feedback_timer = self.create_timer(0.001, self.feedback_loop)
-        self.feedback_timer = self.create_timer(2, self.feedback_loop) # 2 sec
+        self.feedback_timer = self.create_timer(1, self.feedback_loop) # 1 sec
 
     # Main loop for reading sensor feedback and publishing it to ROS topics
     def feedback_loop(self):
@@ -126,6 +126,8 @@ class ugv_bringup(Node):
                 self.publish_odom_raw()  # Publish odometry data
             if "v" in raw_data:  
                 self.publish_voltage()  # Publish voltage data
+            if "temp" in raw_data:  
+                self.publish_temperature()  # Publish temperature data
 
     # Publish IMU data to the ROS topic "imu/data_raw"
     def publish_imu_data_raw(self):
@@ -170,16 +172,19 @@ class ugv_bringup(Node):
 
     # Publish voltage data to the ROS topic "voltage"
     def publish_voltage(self):
-        voltage_data = self.base_controller.base_data
+        voltage_data = self.base_controller.base_data["v"]
         msg = Float32()
-        msg.data = float(voltage_data["v"])/100
+        if voltage_data > 0:
+            msg.data = float(voltage_data)/100
+        else:
+            msg.data = 0
         self.voltage_publisher_.publish(msg)  # Publish the voltage data
 
     # Publish temperature data to the ROS topic "temperature"
-    def publish_voltage(self):
+    def publish_temperature(self):
         temperature_data = self.base_controller.base_data
         msg = Float32()
-        msg.data = float(temperature_data["temp"])/100
+        msg.data = temperature_data["temp"]
         self.temperature_publisher_.publish(msg)  # Publish the voltage data
                         
 # Main function to initialize the ROS node and start spinning
