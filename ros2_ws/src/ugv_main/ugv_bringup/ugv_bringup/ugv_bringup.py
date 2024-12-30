@@ -177,14 +177,14 @@ class ugv_bringup(Node):
         if voltage_data > 0:
             msg.data = float(voltage_data)/100
         else:
-            msg.data = 0
+            msg.data = 0.001
         self.voltage_publisher_.publish(msg)  # Publish the voltage data
 
     # Publish temperature data to the ROS topic "temperature"
     def publish_temperature(self):
         temperature_data = self.base_controller.base_data
         msg = Float32()
-        msg.data = temperature_data["temp"]
+        msg.data = float(temperature_data["temp"])
         self.temperature_publisher_.publish(msg)  # Publish the voltage data
                         
 # Main function to initialize the ROS node and start spinning
