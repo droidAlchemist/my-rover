@@ -108,7 +108,8 @@ class ugv_bringup(Node):
         # Initialize the base controller with the UART port and baud rate
         self.base_controller = BaseController(serial_port, 115200)
         # Timer to periodically execute the feedback loop
-        self.feedback_timer = self.create_timer(0.001, self.feedback_loop)
+        # self.feedback_timer = self.create_timer(0.001, self.feedback_loop)
+        self.feedback_timer = self.create_timer(10, self.feedback_loop) # 10sec
 
     # Main loop for reading sensor feedback and publishing it to ROS topics
     def feedback_loop(self):
