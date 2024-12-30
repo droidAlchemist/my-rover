@@ -1,11 +1,8 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String, Float32, Float32MultiArray
-from nav_msgs.msg import Odometry
+from std_msgs.msg import Float32, Float32MultiArray
 from sensor_msgs.msg import Imu
-from geometry_msgs.msg import PoseStamped
-import json
 from awscrt import mqtt 
 from iot_controller.connection_helper import ConnectionHelper
 
@@ -49,7 +46,7 @@ class MqttPublisher(Node):
         self.create_subscription(
             Float32,
             '/temperature',
-            self.tempertature_listener_callback,
+            self.temperature_listener_callback,
             10
         )
         # Create a subscription to the /odom topic to get the odometry data
