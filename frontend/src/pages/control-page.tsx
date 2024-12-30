@@ -23,13 +23,14 @@ import {
 } from "@/types";
 import { mqtt } from "aws-iot-device-sdk-v2";
 
-const { VOLTAGE, ODOMETRY } = TELEMETRY_MESSAGE_TYPES;
+const { VOLTAGE, ODOMETRY, TEMPERATURE } = TELEMETRY_MESSAGE_TYPES;
 
 export const ControlPage = () => {
   const credentials = useAwsCredentials();
   const connection = useAwsIotMqtt(credentials);
   const [voltageData, setVoltageData] = useState<number>();
-  const [odometryData, setOdometryData] = useState<OdometryMessageType>();
+  const [temperatureData, setTemperatureData] = useState<number>();
+  const [odometryData, setOdometryData] = useState<number[]>();
 
   const onClickLed = useCallback((value: boolean) => {
     console.log(value);
@@ -40,13 +41,17 @@ export const ControlPage = () => {
 
   const setMessageHandler = useCallback((message: string) => {
     if (message) {
+      console.log(message);
       const messageObject: TelemetryMessageType = JSON.parse(message);
       switch (messageObject.type) {
         case VOLTAGE:
           setVoltageData(Number(messageObject.data));
           break;
+        case TEMPERATURE:
+          setTemperatureData(Number(messageObject.data));
+          break;
         case ODOMETRY:
-          setOdometryData(messageObject.data as OdometryMessageType);
+          setOdometryData(messageObject.data as number[]);
           break;
         default:
           break;
@@ -58,7 +63,7 @@ export const ControlPage = () => {
     if (connection) {
       connection.subscribe(
         IOT_ROS2_TOPICS.TELEMETRY,
-        mqtt.QoS.AtLeastOnce,
+        mqtt.QoS.AtMostOnce,
         (_topic, payload) => {
           const message = new TextDecoder("utf-8").decode(
             new Uint8Array(payload),
@@ -122,7 +127,7 @@ export const ControlPage = () => {
             </Grid>
             <Grid size={{ xs: 12 }}>
               {/* Show video data using kinesis from ROS2 */}
-              <VideoStreaming />
+              {/* <VideoStreaming /> */}
             </Grid>
           </Grid>
         </Grid>
@@ -134,6 +139,7 @@ export const ControlPage = () => {
               data={{
                 voltage: voltageData,
                 odometry: odometryData,
+                temperature: temperatureData,
               }}
             />
             {/* Show Lidar data */}

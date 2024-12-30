@@ -65,7 +65,7 @@ class MqttPublisher(Node):
         self.connection_helper.mqtt_conn.publish(
             topic="ros2_telemetry_topic",
             payload=message_json,
-            qos=mqtt.QoS.AT_LEAST_ONCE
+            qos=mqtt.QoS.AT_MOST_ONCE
         )       
 
     def voltage_listener_callback(self, msg):
