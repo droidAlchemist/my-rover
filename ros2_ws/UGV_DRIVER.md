@@ -16,6 +16,8 @@ ros2 run ugv_bringup ugv_bringup
 To echo topics
 ros2 topic list
 
+{'T': 1001, 'L': 0, 'R': 0, 'r': 0.526525497, 'p': 0.324284434, 'y': -118.5199966, 'temp': 71.66666412, 'v': 10.74444962}
+
 
 ## Behavior control
 

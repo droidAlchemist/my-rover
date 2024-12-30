@@ -100,27 +100,32 @@ class BaseController:
 class ugv_bringup(Node):
     def __init__(self):
         super().__init__('ugv_bringup')
-        # Publishers for IMU data, magnetic field data, odometry, and voltage
+        # Publishers for IMU data, magnetic field data, odometry, voltage and temperature
         self.imu_data_raw_publisher_ = self.create_publisher(Imu, "imu/data_raw", 100)
         self.imu_mag_publisher_ = self.create_publisher(MagneticField, "imu/mag", 100)
         self.odom_publisher_ = self.create_publisher(Float32MultiArray, "odom/odom_raw", 100)
         self.voltage_publisher_ = self.create_publisher(Float32, "voltage", 50)
+        self.temperature_publisher_ = self.create_publisher(Float32, "temperature", 50)
         # Initialize the base controller with the UART port and baud rate
         self.base_controller = BaseController(serial_port, 115200)
         # Timer to periodically execute the feedback loop
         # self.feedback_timer = self.create_timer(0.001, self.feedback_loop)
-        self.feedback_timer = self.create_timer(10, self.feedback_loop) # 10sec
+        self.feedback_timer = self.create_timer(2, self.feedback_loop) # 2 sec
 
     # Main loop for reading sensor feedback and publishing it to ROS topics
     def feedback_loop(self):
         self.base_controller.feedback_data()
         if self.base_controller.base_data["T"] == 1001:  # Check if the feedback type is correct
-            self.get_logger().info("Feedback - publish data")
-            self.get_logger().info("Received Feedback data - {}".format(self.base_controller.base_data))            
-            self.publish_imu_data_raw()  # Publish IMU raw data
-            self.publish_imu_mag()  # Publish magnetic field data
-            self.publish_odom_raw()  # Publish odometry data
-            self.publish_voltage()  # Publish voltage data
+            self.get_logger().info("Received Feedback data - {}".format(self.base_controller.base_data))
+            raw_data = self.base_controller.base_data                 
+            if "ax" in raw_data:       
+                self.publish_imu_data_raw()  # Publish IMU raw data
+            if "mx" in raw_data:  
+                self.publish_imu_mag()  # Publish magnetic field data
+            if "odl" in raw_data:  
+                self.publish_odom_raw()  # Publish odometry data
+            if "v" in raw_data:  
+                self.publish_voltage()  # Publish voltage data
 
     # Publish IMU data to the ROS topic "imu/data_raw"
     def publish_imu_data_raw(self):
@@ -169,6 +174,13 @@ class ugv_bringup(Node):
         msg = Float32()
         msg.data = float(voltage_data["v"])/100
         self.voltage_publisher_.publish(msg)  # Publish the voltage data
+
+    # Publish temperature data to the ROS topic "temperature"
+    def publish_voltage(self):
+        temperature_data = self.base_controller.base_data
+        msg = Float32()
+        msg.data = float(temperature_data["temp"])/100
+        self.temperature_publisher_.publish(msg)  # Publish the voltage data
                         
 # Main function to initialize the ROS node and start spinning
 def main(args=None):
