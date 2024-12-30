@@ -9,7 +9,20 @@ import json
 from awscrt import mqtt 
 from iot_controller.connection_helper import ConnectionHelper
 
-RETRY_WAIT_TIME_SECONDS = 5
+RETRY_WAIT_TIME_SECONDS = 15
+
+def todict(obj):        
+    if isinstance(obj, dict):
+        return dict((key.lstrip("_"), todict(val)) for key, val in obj.items())
+    elif hasattr(obj, "_ast"):
+        return todict(obj._ast())
+    elif hasattr(obj, "__iter__") and not isinstance(obj, str):
+        return [todict(v) for v in obj]
+    elif hasattr(obj, '__dict__'):
+        return todict(vars(obj))
+    elif hasattr(obj, '__slots__'):
+        return todict(dict((name, getattr(obj, name)) for name in getattr(obj, '__slots__')))
+    return obj
 
 class MqttPublisher(Node):
     def __init__(self):
@@ -25,14 +38,22 @@ class MqttPublisher(Node):
 
     def init_subs(self):
         """Subscribe to ros2 topics"""
+        # Create a subscription to the /voltage topic to get the voltage data
         self.create_subscription(
             Float32,
             '/voltage',
             self.voltage_listener_callback,
             10
         )
-         # Create a subscription to the /odom topic to get the odometry data
-        self.create_subscription(Odometry, '/odom/odom_raw', self.odom_callback, 10)
+        # Create a subscription to the /temperature topic to get the temperature data
+        self.create_subscription(
+            Float32,
+            '/temperature',
+            self.tempertature_listener_callback,
+            10
+        )
+        # Create a subscription to the /odom topic to get the odometry data
+        self.create_subscription(Float32MultiArray, '/odom/odom_raw', self.odom_callback, 10)
         # Create a subscription to the /imu/data topic to get the robot's imu data
         self.create_subscription(
             Imu,
@@ -57,27 +78,35 @@ class MqttPublisher(Node):
         }
         self.publish_message(message_json)
 
+    def temperature_listener_callback(self, msg):
+        """Callback for the ros2 temperature topic"""
+        message_json = {
+            "temperature": msg.data
+        }
+        self.publish_message(message_json)
+
     def odom_callback(self, msg):
         """Callback for the ros2 odometry topic"""
         try:        
-            twist = msg.twist.twist
-            # velocity = twist.linear.x
-            # angular_velocity = twist.angular.z
-            pose = msg.pose.pose
-            x = pose.orientation.x
-            y = pose.orientation.y
-            distance = pose.position
-            curr_time = msg.header.stamp            
+            # twist = msg.twist.twist
+            # pose = msg.pose.pose
+            # x = pose.orientation.x
+            # y = pose.orientation.y
+            # distance = pose.position
+            # curr_time = msg.header.stamp            
+            # message_json = {
+            #     "odometry": {
+            #         "pose": {
+            #             "x": x,
+            #             "y": y,
+            #             "distance": distance
+            #         },
+            #         "twist": twist,
+            #         "time": curr_time
+            #     }
+            # }
             message_json = {
-                "odometry": {
-                    "pose": {
-                        "x": x,
-                        "y": y,
-                        "distance": distance
-                    },
-                    "twist": twist,
-                    "time": curr_time
-                }
+                "odometry": msg.data
             }
             self.publish_message(message_json)
         except:
@@ -87,7 +116,7 @@ class MqttPublisher(Node):
         """Callback for the ros2 robot pose topic"""
         try:
             message_json = {
-                "imu": json.dumps(msg.data)
+                "imu": todict(msg.data)
             }
             self.publish_message(message_json)
         except:

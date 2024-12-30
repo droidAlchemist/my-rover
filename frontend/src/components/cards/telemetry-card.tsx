@@ -53,14 +53,14 @@ export function TelemetryCard({
                   <Grid size={{ xs: 5 }}>
                     {renderTypographyItem(
                       "Velocity",
-                      data?.odometry?.twist?.linear?.x,
+                      data?.odometry?.[0],
                       "m/s",
                     )}
                   </Grid>
                   <Grid size={{ xs: 5 }}>
                     {renderTypographyItem(
                       "Ang. Velocity",
-                      data?.odometry?.twist?.angular?.z,
+                      data?.odometry?.[1],
                       "m/s",
                     )}
                   </Grid>
@@ -68,13 +68,17 @@ export function TelemetryCard({
                     {renderTypographyItem("Voltage", data?.voltage, "V")}
                   </Grid>
                   <Grid size={{ xs: 5 }}>
-                    {renderTypographyItem("IMU", "_ ")}
+                    {renderTypographyItem(
+                      "Temperature",
+                      data?.temperature,
+                      "°C",
+                    )}
                   </Grid>
                   <Grid size={{ xs: 5 }}>
-                    {renderTypographyItem("Status", undefined)}
+                    {renderTypographyItem("IMU Velocity", "_ ")}
                   </Grid>
                   <Grid size={{ xs: 5 }}>
-                    {renderTypographyItem("Direction", undefined)}
+                    {renderTypographyItem("IMU Ang. Velocity", "_ ")}
                   </Grid>
                 </Grid>
               </Box>

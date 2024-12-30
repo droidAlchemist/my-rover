@@ -13,7 +13,18 @@ export type PoseMessageType = {
   y: number;
   distance: number;
 };
-export type OdometryMessageType = {
+
+export type ImuHeaderType = {
+  frame_id: string;
+};
+
+export type ImuMessageType = {
+  header: PoseMessageType;
+  linear_acceleration: CoordinateType;
+  angular_velocity: CoordinateType;
+};
+
+export type OdometryMessageType2 = {
   pose: PoseMessageType;
   twist: IotVelocityMessageType;
   time: string;
@@ -22,8 +33,8 @@ export type OdometryMessageType = {
 export type IotSensorMessageType = {
   voltage?: number;
   temperature?: number;
-  odometry?: OdometryMessageType;
-  imu?: unknown;
+  odometry?: number[];
+  imu?: ImuMessageType;
 };
 
 export type CoordinateType = {
