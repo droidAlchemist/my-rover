@@ -17,7 +17,6 @@ import { useAwsCredentials, useAwsIotMqtt } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
 import {
   IOT_ROS2_TOPICS,
-  OdometryMessageType,
   TELEMETRY_MESSAGE_TYPES,
   TelemetryMessageType,
 } from "@/types";

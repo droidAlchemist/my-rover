@@ -4,7 +4,7 @@
     "certificatePath" : "/home/joshua/rover1/certificate.pem.crt",
     "privateKeyPath" : "/home/joshua/rover1/private.pem.key",
     "port" : 443,
-    "clientID" : "iot-thing-1-python",
+    "clientID" : "python-my-rover-1",
     "region": "ap-south-1",
     "retryWaitTime": 5,
     "retryAttempts": 10
