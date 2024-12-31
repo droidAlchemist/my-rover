@@ -35,7 +35,7 @@ class ConnectionHelper:
 def main():
     message_json = {
         "type": "voltage",
-        "data": 10.01
+        "data": "10.01"
     }
     connection_helper = ConnectionHelper(path_for_config)
     connection_helper.mqtt_conn.publish(
