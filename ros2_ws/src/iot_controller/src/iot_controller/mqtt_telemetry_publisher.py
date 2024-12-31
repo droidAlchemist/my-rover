@@ -71,13 +71,15 @@ class MqttPublisher(Node):
     def voltage_listener_callback(self, msg):
         """Callback for the ros2 voltage topic"""
         message_json = {
-            "voltage": msg.data
+            "type": "voltage",
+            "data": msg.data
         }
         self.publish_message(message_json)
 
     def temperature_listener_callback(self, msg):
         """Callback for the ros2 temperature topic"""
         message_json = {
+            "type": "temperature",
             "temperature": msg.data
         }
         self.publish_message(message_json)
@@ -85,25 +87,9 @@ class MqttPublisher(Node):
     def odom_callback(self, msg):
         """Callback for the ros2 odometry topic"""
         try:        
-            # twist = msg.twist.twist
-            # pose = msg.pose.pose
-            # x = pose.orientation.x
-            # y = pose.orientation.y
-            # distance = pose.position
-            # curr_time = msg.header.stamp            
-            # message_json = {
-            #     "odometry": {
-            #         "pose": {
-            #             "x": x,
-            #             "y": y,
-            #             "distance": distance
-            #         },
-            #         "twist": twist,
-            #         "time": curr_time
-            #     }
-            # }
             message_json = {
-                "odometry": msg.data
+                "type": "odometry",
+                "data": msg.data
             }
             self.publish_message(message_json)
         except:
@@ -113,7 +99,8 @@ class MqttPublisher(Node):
         """Callback for the ros2 robot pose topic"""
         try:
             message_json = {
-                "imu": todict(msg.data)
+                "type": "imu",
+                "data": todict(msg.data)
             }
             self.publish_message(message_json)
         except:
