@@ -31,8 +31,8 @@ export type OdometryMessageType2 = {
 };
 
 export type IotSensorMessageType = {
-  voltage?: number;
-  temperature?: number;
+  voltage?: string;
+  temperature?: string;
   odometry?: number[];
   imu?: ImuMessageType;
 };

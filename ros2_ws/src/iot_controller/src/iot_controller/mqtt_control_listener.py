@@ -17,19 +17,13 @@ class MqttControlListener(Node):
         self.declare_parameter("discover_endpoints", False)
 
         path_for_config = self.get_parameter("path_for_config").get_parameter_value().string_value
-        self.connection_helper = ConnectionHelper(self.get_logger(), path_for_config)
-        self.connection_helper.send_twist_message = self.on_message_received
+        self.connection_helper = ConnectionHelper(self.get_logger(), path_for_config, self.on_message_received)
 
         self.init_subs()
 
     def init_subs(self):
         """Subscribe to AWS IOT control topic"""
         self.get_logger().info("Subscribing to AWS IoT core robot control topic cmd_vel")
-        # self.connection_helper.mqtt_conn.subscribe(
-        #     SUBSCRIBE_IOT_CONTROL_TOPIC,
-        #     mqtt.QoS.AT_LEAST_ONCE,
-        #     self.on_message_received
-        # )
         subscribe_future = self.connection_helper.client.subscribe(subscribe_packet=mqtt5.SubscribePacket(
         subscriptions=[mqtt5.Subscription(
             topic_filter=SUBSCRIBE_IOT_CONTROL_TOPIC,
@@ -52,7 +46,6 @@ class MqttControlListener(Node):
             vel_pub.publish(twist)
         except:
             self.get_logger().info("Error parsing message from topic : {}".format(payload))
-
 
 
 def main(args=None):

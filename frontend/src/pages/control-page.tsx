@@ -27,8 +27,8 @@ const { VOLTAGE, ODOMETRY, TEMPERATURE } = TELEMETRY_MESSAGE_TYPES;
 export const ControlPage = () => {
   const credentials = useAwsCredentials();
   const connection = useAwsIotMqtt(credentials);
-  const [voltageData, setVoltageData] = useState<number>();
-  const [temperatureData, setTemperatureData] = useState<number>();
+  const [voltageData, setVoltageData] = useState<string>();
+  const [temperatureData, setTemperatureData] = useState<string>();
   const [odometryData, setOdometryData] = useState<number[]>();
 
   const onClickLed = useCallback((value: boolean) => {
@@ -44,10 +44,10 @@ export const ControlPage = () => {
       const messageObject: TelemetryMessageType = JSON.parse(message);
       switch (messageObject.type) {
         case VOLTAGE:
-          setVoltageData(Number(messageObject.data));
+          setVoltageData(String(messageObject.data));
           break;
         case TEMPERATURE:
-          setTemperatureData(Number(messageObject.data));
+          setTemperatureData(String(messageObject.data));
           break;
         case ODOMETRY:
           setOdometryData(messageObject.data as number[]);

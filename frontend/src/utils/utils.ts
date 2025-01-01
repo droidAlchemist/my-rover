@@ -15,6 +15,8 @@ export const withErrorLog =
     return fn(error);
   };
 
+export const roundDecimal = (d?: string) => (d ? parseFloat(d).toFixed(2) : 0);
+
 /* 
   ROS2 Commands: forward  --> x   backward --> -x   left --> z    right -> -z
   For Joystick control convert y --> linear x and x --> angular z  

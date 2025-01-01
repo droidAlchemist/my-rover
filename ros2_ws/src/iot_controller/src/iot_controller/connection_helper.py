@@ -7,11 +7,13 @@ SUBSCRIBE_IOT_CONTROL_TOPIC = "cmd_vel"
 TIMEOUT = 100
 
 class ConnectionHelper:
-    def __init__(self, logger, path_for_config=""):
+    def __init__(self, logger, path_for_config="", on_receive_func = None):
         self.path_for_config = path_for_config
         self.logger = logger
         self.future_stopped = Future()
         self.future_connection_success = Future() 
+
+        self.on_receive_func = on_receive_func
 
         with open(path_for_config) as f:
           cert_data = json.load(f)
@@ -50,9 +52,6 @@ class ConnectionHelper:
         self.future_stopped.result(TIMEOUT)
         self.logger.info("Client Stopped!")
 
-    def send_twist_message(self, payload):
-        print("Handle twist")
-
     # Callback when any publish is received
     def on_publish_received(self, publish_packet_data):
         publish_packet = publish_packet_data.publish_packet
@@ -60,8 +59,10 @@ class ConnectionHelper:
         topic = publish_packet.topic
         payload = publish_packet.payload
         self.logger.info("Received message from topic'{}':{}".format(topic, payload))
-        if topic == SUBSCRIBE_IOT_CONTROL_TOPIC:
-            self.send_twist_message(payload)
+        if self.on_receive_func != None:
+            self.on_receive_func(payload)
+        # if topic == SUBSCRIBE_IOT_CONTROL_TOPIC:
+        #     self.send_twist_message(payload)
 
     def connect_to_endpoint(self, cert_data):
         self.client = mqtt5_client_builder.mtls_from_path(
@@ -78,9 +79,9 @@ class ConnectionHelper:
             on_lifecycle_connection_failure=self.on_lifecycle_connection_failure,
         )
         self.logger.info("MQTT5 Client Created!")
-        self.logger.info(f"Connecting to {cert_data["endpoint"]} with client ID '{cert_data["clientID"]}'...")
+        self.logger.info(f"Connecting to endpoint with Client ID '{cert_data["clientID"]}'...")
         self.client.start()        
         lifecycle_connect_success_data = self.future_connection_success.result(TIMEOUT)
         connack_packet = lifecycle_connect_success_data.connack_packet
         negotiated_settings = lifecycle_connect_success_data.negotiated_settings
-        self.logger.info(f"Connected to endpoint:'{cert_data["endpoint"]}' with Client ID:'{cert_data["endpoint"]}' with reason_code:{repr(connack_packet.reason_code)}")
+        self.logger.info(f"Connected to endpoint with Client ID:'{cert_data["clientID"]}' with reason_code:{repr(connack_packet.reason_code)}")

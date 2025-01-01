@@ -5,10 +5,15 @@ from std_msgs.msg import Float32, Float32MultiArray
 from sensor_msgs.msg import Imu
 from awscrt import mqtt5
 import json 
+import serial
 from iot_controller.connection_helper import ConnectionHelper
 
 RETRY_WAIT_TIME_SECONDS = 100
 TELEMETRY_MESSAGE_TOPIC = "ros2/telemetry/topic"
+
+# Initialize serial communication with the UGV
+serial_port = '/dev/ttyAMA0'
+ser = serial.Serial(serial_port, 115200, timeout=1)
 
 def todict(obj):        
     if isinstance(obj, dict):
@@ -33,6 +38,25 @@ class MqttPublisher(Node):
         self.connection_helper = ConnectionHelper(self.get_logger(), path_for_config)
 
         self.init_subs()
+        self.init_rover()
+
+    def init_rover(self):
+        """Setup to UGV Rover to send telemetry"""
+        ctrl_data = json.dumps({
+            "T":900,
+            "main": 1,
+            "module": 0
+        }) + "\n"     
+        ser.write(ctrl_data.encode())    
+
+        ctrl_data = json.dumps({"T":131,"cmd":0}) + "\n"            
+        ser.write(ctrl_data.encode())  
+
+        ctrl_data = json.dumps({"T":131,"cmd":1}) + "\n"            
+        ser.write(ctrl_data.encode()) 
+
+        #close serial comminication
+        ser.close()
 
     def init_subs(self):
         """Subscribe to ros2 topics"""
@@ -84,7 +108,7 @@ class MqttPublisher(Node):
         """Callback for the ros2 temperature topic"""
         message_json = {
             "type": "temperature",
-            "temperature": msg.data
+            "data": msg.data
         }
         self.publish_message(message_json)
 

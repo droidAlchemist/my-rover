@@ -1,4 +1,5 @@
 import { IotSensorMessageType } from "@/types";
+import { roundDecimal } from "@/utils";
 import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid2";
@@ -65,12 +66,16 @@ export function TelemetryCard({
                     )}
                   </Grid>
                   <Grid size={{ xs: 5 }}>
-                    {renderTypographyItem("Voltage", data?.voltage, "V")}
+                    {renderTypographyItem(
+                      "Voltage",
+                      roundDecimal(data?.voltage),
+                      "V",
+                    )}
                   </Grid>
                   <Grid size={{ xs: 5 }}>
                     {renderTypographyItem(
                       "Temperature",
-                      data?.temperature,
+                      roundDecimal(data?.temperature),
                       "°C",
                     )}
                   </Grid>
