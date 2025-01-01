@@ -7,6 +7,7 @@ from concurrent.futures import Future
 path_for_config = '/home/joshua/my-rover/ros2_ws/src/iot_controller/iot_certs_and_config/iot_config.json'
 future_stopped = Future()
 future_connection_success = Future() 
+message_topic = "ros2_telemetry_topic"
 
 TIMEOUT = 100
 
@@ -23,8 +24,41 @@ class ConnectionHelper:
         # self.logger.info("Connecting directly to endpoint")
         self.connect_to_endpoint(cert_data)
 
+    # Callback for the lifecycle event Stopped
+    def on_lifecycle_stopped(self, lifecycle_stopped_data: mqtt5.LifecycleStoppedData):
+        print("Lifecycle Stopped")
+        global future_stopped
+        future_stopped.set_result(lifecycle_stopped_data)
+
+
+    # Callback for the lifecycle event Connection Success
+    def on_lifecycle_connection_success(self, lifecycle_connect_success_data: mqtt5.LifecycleConnectSuccessData):
+        print("Lifecycle Connection Success")
+        global future_connection_success
+        future_connection_success.set_result(lifecycle_connect_success_data)
+
+
+    # Callback for the lifecycle event Connection Failure
+    def on_lifecycle_connection_failure(self, lifecycle_connection_failure: mqtt5.LifecycleConnectFailureData):
+        print("Lifecycle Connection Failure")
+        print("Connection failed with exception:{}".format(lifecycle_connection_failure.exception))
+    
+    def cleanup(self):
+        # Unsubscribe
+        print("Unsubscribing from topic '{}'".format(message_topic))
+        unsubscribe_future = self.client.unsubscribe(unsubscribe_packet=mqtt5.UnsubscribePacket(
+            topic_filters=[message_topic]))
+        unsuback = unsubscribe_future.result(TIMEOUT)
+        print("Unsubscribed with {}".format(unsuback.reason_codes))
+
+        print("Stopping Client")
+        self.client.stop()
+
+        future_stopped.result(TIMEOUT)
+        print("Client Stopped!")
+
     def connect_to_endpoint(self, cert_data):
-        self.mqtt_conn = mqtt5_client_builder.mtls_from_path(
+        self.client = mqtt5_client_builder.mtls_from_path(
             endpoint=cert_data["endpoint"],
             port= cert_data["port"],
             cert_filepath= cert_data["certificatePath"],
@@ -32,9 +66,14 @@ class ConnectionHelper:
             ca_filepath= cert_data["rootCAPath"],
             client_id= cert_data["clientID"],
             http_proxy_options=None,
+            on_lifecycle_stopped=self.on_lifecycle_stopped,
+            on_lifecycle_connection_success=self.on_lifecycle_connection_success,
+            on_lifecycle_connection_failure=self.on_lifecycle_connection_failure,
         )
-        connected_future = self.mqtt_conn.start()
-        connected_future.result()
+        self.client.start()        
+        lifecycle_connect_success_data = future_connection_success.result(TIMEOUT)
+        connack_packet = lifecycle_connect_success_data.connack_packet
+        negotiated_settings = lifecycle_connect_success_data.negotiated_settings
         # self.logger.info("Connected!")
 
 def main():
@@ -43,7 +82,6 @@ def main():
         "data": "10.01"
     }
     connection_helper = ConnectionHelper(path_for_config)
-    message_topic = "ros2_telemetry_topic"
     message_string = message_json
     print("Publishing message to topic '{}': {}".format(message_topic, message_string))
     publish_future = connection_helper.mqtt_conn.publish(mqtt5.PublishPacket(
