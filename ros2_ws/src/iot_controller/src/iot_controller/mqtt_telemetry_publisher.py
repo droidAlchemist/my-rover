@@ -3,10 +3,12 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32, Float32MultiArray
 from sensor_msgs.msg import Imu
-from awscrt import mqtt 
+from awscrt import mqtt5
+import json 
 from iot_controller.connection_helper import ConnectionHelper
 
-RETRY_WAIT_TIME_SECONDS = 15
+RETRY_WAIT_TIME_SECONDS = 100
+TELEMETRY_MESSAGE_TOPIC = "ros2/telemetry/topic"
 
 def todict(obj):        
     if isinstance(obj, dict):
@@ -28,8 +30,7 @@ class MqttPublisher(Node):
         self.declare_parameter("discover_endpoints", False)
 
         path_for_config = self.get_parameter("path_for_config").get_parameter_value().string_value
-        discover_endpoints = self.get_parameter("discover_endpoints").get_parameter_value().bool_value
-        self.connection_helper = ConnectionHelper(self.get_logger(), path_for_config, discover_endpoints)
+        self.connection_helper = ConnectionHelper(self.get_logger(), path_for_config)
 
         self.init_subs()
 
@@ -61,12 +62,15 @@ class MqttPublisher(Node):
 
     def publish_message(self, message_json):
         """Callback for the ros2 telemetry topic"""
-        self.get_logger().info("Received ROS2 data - {}\nPublishing to AWS IoT".format(message_json))
-        self.connection_helper.mqtt_conn.publish(
-            topic="ros2_telemetry_topic",
-            payload=message_json,
-            qos=mqtt.QoS.AT_MOST_ONCE
-        )       
+        self.get_logger().info("Received ROS2 data - {}\nPublishing to AWS IoT".format(message_json))    
+        publish_future = self.connection_helper.client.publish(mqtt5.PublishPacket(
+            topic=TELEMETRY_MESSAGE_TOPIC,
+            payload=json.dumps(message_json),
+            qos=mqtt5.QoS.AT_LEAST_ONCE
+        ))
+
+        publish_completion_data = publish_future.result(RETRY_WAIT_TIME_SECONDS)
+        print("PubAck received with {}".format(repr(publish_completion_data.puback.reason_code)))
 
     def voltage_listener_callback(self, msg):
         """Callback for the ros2 voltage topic"""

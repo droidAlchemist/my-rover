@@ -7,7 +7,7 @@ from concurrent.futures import Future
 path_for_config = '/home/joshua/my-rover/ros2_ws/src/iot_controller/iot_certs_and_config/iot_config.json'
 future_stopped = Future()
 future_connection_success = Future() 
-message_topic = "ros2_telemetry_topic"
+message_topic = "ros2/telemetry/topic"
 
 TIMEOUT = 100
 

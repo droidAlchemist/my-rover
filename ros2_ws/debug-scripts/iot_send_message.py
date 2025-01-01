@@ -39,7 +39,7 @@ def main():
     }
     connection_helper = ConnectionHelper(path_for_config)
     connection_helper.mqtt_conn.publish(
-            topic="ros2_telemetry_topic",
+            topic="ros2/telemetry/topic",
             payload=message_json,
             qos=mqtt.QoS.AT_MOST_ONCE
         ) 

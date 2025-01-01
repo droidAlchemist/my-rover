@@ -3,7 +3,7 @@ export const DRAWER_WIDTH = 240;
 
 // Telemetry
 export enum IOT_ROS2_TOPICS {
-  "TELEMETRY" = "ros2_telemetry_topic",
+  "TELEMETRY" = "ros2/telemetry/topic",
   "CONTROL1" = "cmd_vel",
 }
 export enum TELEMETRY_MESSAGE_TYPES {
