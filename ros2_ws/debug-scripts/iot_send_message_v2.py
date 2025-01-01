@@ -84,7 +84,7 @@ def main():
     connection_helper = ConnectionHelper(path_for_config)
     message_string = message_json
     print("Publishing message to topic '{}': {}".format(message_topic, message_string))
-    publish_future = connection_helper.mqtt_conn.publish(mqtt5.PublishPacket(
+    publish_future = connection_helper.client.publish(mqtt5.PublishPacket(
         topic=message_topic,
         payload=json.dumps(message_string),
         qos=mqtt5.QoS.AT_LEAST_ONCE
