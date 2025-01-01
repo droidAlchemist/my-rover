@@ -36,10 +36,10 @@ class MqttControlListener(Node):
             qos=mqtt5.QoS.AT_LEAST_ONCE)]
         ))
         suback = subscribe_future.result(RETRY_WAIT_TIME_SECONDS)
-        self.get_logger.info("Subscribed with {}".format(suback.reason_codes))
+        self.get_logger().info("Subscribed with {}".format(suback.reason_codes))
 
     def on_message_received(self, payload):
-        self.get_logger.info("Received message from topic: {}".format(payload))
+        self.get_logger().info("Received message from topic: {}".format(payload))
         command = payload.decode('utf8').replace("'", '"')
         try:
             commandDict = json.loads(command)
@@ -51,7 +51,7 @@ class MqttControlListener(Node):
             twist.angular.z = float(z)
             vel_pub.publish(twist)
         except:
-            self.get_logger.info("Error parsing message from topic : {}".format(payload))
+            self.get_logger().info("Error parsing message from topic : {}".format(payload))
 
 
 
