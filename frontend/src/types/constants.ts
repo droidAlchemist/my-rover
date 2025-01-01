@@ -18,7 +18,7 @@ export enum TELEMETRY_MESSAGE_TYPES {
 
 export type DIRECTION_TYPES = "FORWARD" | "RIGHT" | "LEFT" | "BACKWARD";
 export type MOVEMENT_TYPES = "move" | "stop" | "start";
-export const ROBOT_CONTROL_MULTIPLIER = 4;
+export const ROBOT_CONTROL_MULTIPLIER = 0.5;
 
 // Kinesis WebRTC
 export const ERROR_CHANNEL_ARN_MISSING = "Missing channel ARN";

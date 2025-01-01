@@ -36,8 +36,8 @@ export function RobotControllerCard({ connection }: RobotControllerCardProps) {
         size={140}
         stickSize={50}
         sticky={false}
-        throttle={1000}
-        minDistance={10}
+        throttle={100}
+        minDistance={1}
         move={(d: any) => onChangeJoystick(d)}
         baseImage="gamepad_v2.svg"
         stickImage="ball.svg"

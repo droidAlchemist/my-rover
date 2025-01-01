@@ -21,6 +21,11 @@ import {
   TelemetryMessageType,
 } from "@/types";
 import { mqtt } from "aws-iot-device-sdk-v2";
+import {
+  caclulateBatteryPercent,
+  caclulateBatteryPercent2,
+  getBatteryPercentage,
+} from "@/utils";
 
 const { VOLTAGE, ODOMETRY, TEMPERATURE } = TELEMETRY_MESSAGE_TYPES;
 
@@ -29,6 +34,7 @@ export const ControlPage = () => {
   const connection = useAwsIotMqtt(credentials);
   const [voltageData, setVoltageData] = useState<string>();
   const [temperatureData, setTemperatureData] = useState<string>();
+  const [batteryPercent, setBatteryPercent] = useState<string>("0%");
   const [odometryData, setOdometryData] = useState<number[]>();
 
   const onClickLed = useCallback((value: boolean) => {
@@ -44,7 +50,10 @@ export const ControlPage = () => {
       const messageObject: TelemetryMessageType = JSON.parse(message);
       switch (messageObject.type) {
         case VOLTAGE:
-          setVoltageData(String(messageObject.data));
+          const volt = messageObject.data as number;
+          const calculatedPercent = getBatteryPercentage(volt * 100);
+          setVoltageData(String(volt));
+          setBatteryPercent(String(calculatedPercent) + "%");
           break;
         case TEMPERATURE:
           setTemperatureData(String(messageObject.data));
@@ -90,7 +99,7 @@ export const ControlPage = () => {
                 icon={<FlashlightOn />}
                 percentage={{
                   color: "#F0000F",
-                  count: "55%",
+                  count: batteryPercent,
                   text: "battery remaining.",
                 }}
               />

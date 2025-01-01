@@ -174,10 +174,7 @@ class ugv_bringup(Node):
     def publish_voltage(self):
         voltage_data = self.base_controller.base_data["v"]
         msg = Float32()
-        if voltage_data > 0:
-            msg.data = float(voltage_data)/100
-        else:
-            msg.data = 0.001
+        msg.data = float(voltage_data)
         self.voltage_publisher_.publish(msg)  # Publish the voltage data
 
     # Publish temperature data to the ROS topic "temperature"

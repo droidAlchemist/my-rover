@@ -26,94 +26,92 @@ export function TelemetryCard({
     >
       <Box sx={{ bgcolor: "white", color: "#344767" }}>
         <Box p={2}>
-          <Grid container>
-            <Grid size={{ xs: 10 }}>
-              <Box
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 1,
+            }}
+          >
+            <Box
+              sx={{
+                lineHeight: 1,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                background: "transparent",
+                color: "#344767",
+              }}
+            >
+              <Typography
+                variant="button"
                 sx={{
-                  lineHeight: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 1,
-                  background: "transparent",
-                  color: "#344767",
+                  fontSize: "0.875rem",
+                  lineHeight: 1.5,
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  color: "#67748e",
                 }}
               >
-                <Typography
-                  variant="button"
-                  sx={{
-                    fontSize: "0.875rem",
-                    lineHeight: 1.5,
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                    color: "#67748e",
-                  }}
-                >
-                  Telemetry
-                </Typography>
-                <Grid container sx={{ gap: 1 }}>
-                  <Grid size={{ xs: 5 }}>
-                    {renderTypographyItem(
-                      "Velocity",
-                      data?.odometry?.[0],
-                      "m/s",
-                    )}
-                  </Grid>
-                  <Grid size={{ xs: 5 }}>
-                    {renderTypographyItem(
-                      "Ang. Velocity",
-                      data?.odometry?.[1],
-                      "m/s",
-                    )}
-                  </Grid>
-                  <Grid size={{ xs: 5 }}>
-                    {renderTypographyItem(
-                      "Voltage",
-                      roundDecimal(data?.voltage),
-                      "V",
-                    )}
-                  </Grid>
-                  <Grid size={{ xs: 5 }}>
-                    {renderTypographyItem(
-                      "Temperature",
-                      roundDecimal(data?.temperature),
-                      "°C",
-                    )}
-                  </Grid>
-                  <Grid size={{ xs: 5 }}>
-                    {renderTypographyItem("IMU Velocity", "_ ")}
-                  </Grid>
-                  <Grid size={{ xs: 5 }}>
-                    {renderTypographyItem("IMU Ang. Velocity", "_ ")}
-                  </Grid>
+                Telemetry
+              </Typography>
+              <Grid container rowSpacing={1} columnSpacing={1}>
+                <Grid size={{ xs: 6 }}>
+                  {renderTypographyItem("Velocity", data?.odometry?.[0], "m/s")}
                 </Grid>
-              </Box>
-            </Grid>
-            <Grid size={{ xs: 2 }}>
+                <Grid size={{ xs: 6 }}>
+                  {renderTypographyItem(
+                    "Ang. Velocity",
+                    data?.odometry?.[1],
+                    "m/s",
+                  )}
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  {renderTypographyItem(
+                    "Voltage",
+                    roundDecimal(data?.voltage),
+                    "V",
+                  )}
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  {renderTypographyItem(
+                    "Temperature",
+                    roundDecimal(data?.temperature),
+                    "°C",
+                  )}
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  {renderTypographyItem("IMU Velocity", "_ ")}
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  {renderTypographyItem("IMU Ang. Velocity", "_ ")}
+                </Grid>
+              </Grid>
+            </Box>
+            <Box
+              sx={{
+                width: "3rem",
+                height: "3rem",
+                display: "flex",
+                flexShrink: 0,
+                justifyContent: "center",
+                alignItems: "center",
+                opacity: 1,
+                background: gradientColor,
+                color: "white",
+                borderRadius: "10rem",
+              }}
+            >
               <Box
                 sx={{
-                  width: "3rem",
-                  height: "3rem",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginLeft: "auto",
-                  opacity: 1,
-                  background: gradientColor,
-                  color: "white",
-                  borderRadius: "10rem",
+                  fontSize: "1.125rem",
+                  display: "grid",
                 }}
               >
-                <Box
-                  sx={{
-                    fontSize: "1.125rem",
-                    display: "grid",
-                  }}
-                >
-                  {icon}
-                </Box>
+                {icon}
               </Box>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
           <Box
             sx={{
               display: "flex",
