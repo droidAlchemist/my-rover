@@ -33,7 +33,7 @@ class ConnectionHelper:
             client_id= cert_data["clientID"],
             http_proxy_options=None,
         )
-        connected_future = self.mqtt_conn.connect()
+        connected_future = self.mqtt_conn.start()
         connected_future.result()
         # self.logger.info("Connected!")
 
