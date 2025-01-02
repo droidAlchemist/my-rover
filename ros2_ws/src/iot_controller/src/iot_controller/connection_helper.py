@@ -63,7 +63,7 @@ class ConnectionHelper:
             self.on_receive_func(payload)
 
     def connect_to_endpoint(self, cert_data):
-        clientID = cert_data["clientID"] + str(uuid.uuid5())
+        clientID = cert_data["clientID"] + str(uuid.uuid4())
         self.client = mqtt5_client_builder.mtls_from_path(
             endpoint=cert_data["endpoint"],
             port= cert_data["port"],
