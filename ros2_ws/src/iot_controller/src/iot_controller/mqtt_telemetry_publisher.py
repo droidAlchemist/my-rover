@@ -137,12 +137,15 @@ class MqttPublisher(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    minimal_subscriber = MqttPublisher()
-    rclpy.spin(minimal_subscriber)
-
-    # Destroy the node
-    minimal_subscriber.destroy_node()
-    rclpy.shutdown()
+    try:
+        minimal_subscriber = MqttPublisher()
+        rclpy.spin(minimal_subscriber)
+    except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
+        # Do cleanup
+        minimal_subscriber.connection_helper.cleanup()
+        # Destroy the node
+        minimal_subscriber.destroy_node()
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':

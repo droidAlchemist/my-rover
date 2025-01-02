@@ -2,6 +2,7 @@ from awsiot import mqtt5_client_builder
 from awscrt import mqtt5, http
 from concurrent.futures import Future
 import json  
+import uuid
 
 SUBSCRIBE_IOT_CONTROL_TOPIC = "cmd_vel"
 TIMEOUT = 100
@@ -26,7 +27,6 @@ class ConnectionHelper:
     def on_lifecycle_stopped(self, lifecycle_stopped_data: mqtt5.LifecycleStoppedData):
         self.logger.info("Lifecycle Stopped")
         self.future_stopped.set_result(lifecycle_stopped_data)
-
 
     # Callback for the lifecycle event Connection Success
     def on_lifecycle_connection_success(self, lifecycle_connect_success_data: mqtt5.LifecycleConnectSuccessData):
@@ -61,17 +61,16 @@ class ConnectionHelper:
         self.logger.info("Received message from topic'{}':{}".format(topic, payload))
         if self.on_receive_func != None:
             self.on_receive_func(payload)
-        # if topic == SUBSCRIBE_IOT_CONTROL_TOPIC:
-        #     self.send_twist_message(payload)
 
     def connect_to_endpoint(self, cert_data):
+        clientID = cert_data["clientID"] + str(uuid.uuid5())
         self.client = mqtt5_client_builder.mtls_from_path(
             endpoint=cert_data["endpoint"],
             port= cert_data["port"],
             cert_filepath= cert_data["certificatePath"],
             pri_key_filepath= cert_data["privateKeyPath"],
             ca_filepath= cert_data["rootCAPath"],
-            client_id= cert_data["clientID"],
+            client_id= clientID,
             http_proxy_options=None,
             on_publish_received=self.on_publish_received,
             on_lifecycle_stopped=self.on_lifecycle_stopped,
@@ -79,9 +78,9 @@ class ConnectionHelper:
             on_lifecycle_connection_failure=self.on_lifecycle_connection_failure,
         )
         self.logger.info("MQTT5 Client Created!")
-        self.logger.info(f"Connecting to endpoint with Client ID '{cert_data["clientID"]}'...")
+        self.logger.info(f"Connecting to endpoint with Client ID '{clientID}'...")
         self.client.start()        
         lifecycle_connect_success_data = self.future_connection_success.result(TIMEOUT)
         connack_packet = lifecycle_connect_success_data.connack_packet
         negotiated_settings = lifecycle_connect_success_data.negotiated_settings
-        self.logger.info(f"Connected to endpoint with Client ID:'{cert_data["clientID"]}' with reason_code:{repr(connack_packet.reason_code)}")
+        self.logger.info(f"Connected to endpoint with Client ID:'{clientID}' with reason_code:{repr(connack_packet.reason_code)}")

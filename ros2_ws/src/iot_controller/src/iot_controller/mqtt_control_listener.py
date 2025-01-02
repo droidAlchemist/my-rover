@@ -51,15 +51,19 @@ class MqttControlListener(Node):
 def main(args=None):
     rclpy.init(args=args)
     global vel_pub
-    vel_pub = rclpy.create_node('vel_publisher').create_publisher(Twist, "cmd_vel", 10)
-    minimal_subscriber = MqttControlListener()
-    
-    rclpy.spin(minimal_subscriber)
-    rclpy.spin(vel_pub)
 
-    # Destroy the node
-    minimal_subscriber.destroy_node()
-    rclpy.shutdown()
+    try:
+        vel_pub = rclpy.create_node('vel_publisher').create_publisher(Twist, "cmd_vel", 10)
+        minimal_subscriber = MqttControlListener()
+        
+        rclpy.spin(minimal_subscriber)
+        rclpy.spin(vel_pub)
+    except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
+        # Do cleanup
+        minimal_subscriber.connection_helper.cleanup()
+        # Destroy the node
+        minimal_subscriber.destroy_node()
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':

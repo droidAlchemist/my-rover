@@ -21,11 +21,7 @@ import {
   TelemetryMessageType,
 } from "@/types";
 import { mqtt } from "aws-iot-device-sdk-v2";
-import {
-  caclulateBatteryPercent,
-  caclulateBatteryPercent2,
-  getBatteryPercentage,
-} from "@/utils";
+import { getBatteryPercentage } from "@/utils";
 
 const { VOLTAGE, ODOMETRY, TEMPERATURE } = TELEMETRY_MESSAGE_TYPES;
 
@@ -46,7 +42,6 @@ export const ControlPage = () => {
 
   const setMessageHandler = useCallback((message: string) => {
     if (message) {
-      console.log(message);
       const messageObject: TelemetryMessageType = JSON.parse(message);
       switch (messageObject.type) {
         case VOLTAGE:
