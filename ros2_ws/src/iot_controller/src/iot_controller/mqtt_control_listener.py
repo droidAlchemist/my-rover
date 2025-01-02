@@ -61,9 +61,10 @@ def main(args=None):
     except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
         # Do cleanup
         minimal_subscriber.connection_helper.cleanup()
-        # Destroy the node
-        minimal_subscriber.destroy_node()
-        rclpy.shutdown()
+    
+    # Destroy the node
+    minimal_subscriber.destroy_node()
+    rclpy.shutdown()
 
 
 if __name__ == '__main__':
