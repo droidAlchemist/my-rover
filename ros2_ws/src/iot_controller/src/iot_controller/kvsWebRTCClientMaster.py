@@ -35,6 +35,7 @@ AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION')
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_WEBRTC_CHANNEL = os.getenv('AWS_WEBRTC_CHANNEL')
+AWS_SESSION_TOKEN = os.getenv('AWS_SESSION_TOKEN')
 
 class MediaTrackManager:
     def __init__(self, file_path=None):
@@ -323,6 +324,7 @@ async def main():
     credentials = {
         "accessKeyId": AWS_ACCESS_KEY_ID,
         "secretAccessKey": AWS_ACCESS_KEY_ID,
+        "sessionToken": AWS_SESSION_TOKEN
     }
 
     client = KinesisVideoClient(
