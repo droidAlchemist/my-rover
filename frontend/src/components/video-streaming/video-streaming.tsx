@@ -9,6 +9,7 @@ export function VideoStreaming() {
         sx={{
           display: "flex",
           flexDirection: "column",
+          alignItems: "center",
           backgroundColor: "black",
         }}
       >

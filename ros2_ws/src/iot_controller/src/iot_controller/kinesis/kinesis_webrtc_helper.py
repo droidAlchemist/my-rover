@@ -1,21 +1,21 @@
 import asyncio
 import boto3
 import json
-import platform
 import websockets
 from aiortc import RTCConfiguration, RTCIceServer, RTCPeerConnection, RTCSessionDescription
-from aiortc.contrib.media import MediaBlackhole, MediaPlayer, MediaRelay
+from aiortc.contrib.media import MediaBlackhole
 from aiortc.sdp import candidate_from_sdp
 from base64 import b64decode, b64encode
 from botocore.auth import SigV4QueryAuth
 from botocore.awsrequest import AWSRequest
 from botocore.credentials import Credentials
 from botocore.session import Session
+from iot_controller.media_helper import MediaHelper
 import os
-import sys
-import logging
+# import sys
+# import logging
 
-logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+# logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
 THING_NAME = os.getenv('THING_NAME')
 AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION')
@@ -23,43 +23,13 @@ AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_WEBRTC_CHANNEL = os.getenv('AWS_WEBRTC_CHANNEL')
 
-class MediaTrackManager:
-    def __init__(self, file_path=None):
-        self.file_path = file_path
-
-    def create_media_track(self):
-        relay = MediaRelay()
-        options = {'framerate': '30', 'video_size': '1280x720'}
-        system = platform.system()
-
-        if self.file_path and not os.path.exists(self.file_path):
-            raise FileNotFoundError(f"The file {self.file_path} does not exist.")
-
-        if system == 'Darwin':
-            media = MediaPlayer('default:default', format='avfoundation', options=options) if not self.file_path else MediaPlayer(self.file_path)
-        elif system == 'Windows':
-            media = MediaPlayer('video=Integrated Camera', format='dshow', options=options)
-        elif system == 'Linux':
-            media = MediaPlayer('/dev/video0', format='v4l2', options=options) if not self.file_path else MediaPlayer(self.file_path)
-        else:
-            raise NotImplementedError(f"Unsupported platform: {system}")
-
-        audio_track = relay.subscribe(media.audio) if media.audio else None
-        video_track = relay.subscribe(media.video) if media.video else None
-
-        if audio_track is None and video_track is None:
-            raise ValueError("Neither audio nor video track could be created from the source.")
-
-        return audio_track, video_track
-
-
-class KinesisVideoClient:
+class KinesisWebRTCHelper:
     def __init__(self, client_id, region, channel_arn, credentials, file_path=None):
         self.client_id = client_id
         self.region = region
         self.channel_arn = channel_arn
         self.credentials = credentials
-        self.media_manager = MediaTrackManager(file_path)
+        self.media_manager = MediaHelper(file_path)
         if self.credentials:
             self.kinesisvideo = boto3.client('kinesisvideo', 
                                              region_name=self.region, 
@@ -238,27 +208,3 @@ class KinesisVideoClient:
                 print('Connection closed, reconnecting...')
                 wss_url = self.create_wss_url()
                 continue
-
-
-async def run_client(client):
-    await client.signaling_client()
-    
-async def main():
-
-    if not AWS_ACCESS_KEY_ID:
-        raise Exception("AWS_ACCESS_KEY_ID environment variable should be configured.\ni.e. export AWS_ACCESS_KEY_ID=1234")
-    if not AWS_DEFAULT_REGION:
-        raise Exception("AWS_DEFAULT_REGION environment variable should be configured.\ni.e. export AWS_DEFAULT_REGION=us-west-2")
-
-    client = KinesisVideoClient(
-        client_id= "MASTER",
-        region=AWS_DEFAULT_REGION,
-        channel_arn=AWS_WEBRTC_CHANNEL,
-        credentials=None,
-        file_path="/home/joshua/video-media-samples/big-buck-bunny-1080p-30sec.mp4"
-    )
-    
-    await run_client(client)
-
-if __name__ == '__main__':
-    asyncio.run(main())
