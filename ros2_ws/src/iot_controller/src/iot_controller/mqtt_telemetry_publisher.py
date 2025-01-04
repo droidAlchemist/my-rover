@@ -6,6 +6,7 @@ from sensor_msgs.msg import Imu
 from awscrt import mqtt5
 import json 
 import serial
+from time import sleep
 from iot_controller.connection_helper import ConnectionHelper
 
 RETRY_WAIT_TIME_SECONDS = 100
@@ -48,13 +49,13 @@ class MqttPublisher(Node):
             "module": 0
         }) + "\n"     
         ser.write(ctrl_data.encode())    
-
+        sleep(0.1)
         ctrl_data = json.dumps({"T":131,"cmd":0}) + "\n"            
         ser.write(ctrl_data.encode())  
-
+        sleep(0.1)
         ctrl_data = json.dumps({"T":131,"cmd":1}) + "\n"            
         ser.write(ctrl_data.encode()) 
-
+        sleep(0.1)
         #close serial comminication
         ser.close()
 
