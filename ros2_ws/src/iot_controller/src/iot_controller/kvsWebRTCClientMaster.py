@@ -1,4 +1,3 @@
-import argparse
 import asyncio
 import boto3
 import json
@@ -15,27 +14,14 @@ from botocore.session import Session
 import os
 import sys
 import logging
-import requests
-from typing import Dict, Optional
-# from dotenv import load_dotenv
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
-# Construct script_output_path
-# script_output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../infra/script-output')
-
-# load_dotenv(dotenv_path=f"{script_output_path}/.env")  # take environment variables from .env.
-# IOT_CREDENTIAL_PROVIDER = os.getenv('IOT_CREDENTIAL_PROVIDER')
 THING_NAME = os.getenv('THING_NAME')
-# ROLE_ALIAS = os.getenv('ROLE_ALIAS')
-# CERT_FILE = f"{script_output_path}/{os.getenv('CERT_FILE')}"
-# KEY_FILE = f"{script_output_path}/{os.getenv('KEY_FILE')}"
-# ROOT_CA = f"{script_output_path}/{os.getenv('ROOT_CA')}"
 AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION')
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_WEBRTC_CHANNEL = os.getenv('AWS_WEBRTC_CHANNEL')
-AWS_SESSION_TOKEN = os.getenv('AWS_SESSION_TOKEN')
 
 class MediaTrackManager:
     def __init__(self, file_path=None):
@@ -254,85 +240,22 @@ class KinesisVideoClient:
                 continue
 
 
-class IoTCredentialProvider:
-    def __init__(self, endpoint: str, region: str, thing_name: str, role_alias: str, 
-                 cert_path: str, key_path: str, root_ca_path: str):
-        self.endpoint = endpoint
-        self.region = region
-        self.thing_name = thing_name
-        self.role_alias = role_alias
-        self.cert_path = cert_path
-        self.key_path = key_path
-        self.root_ca_path = root_ca_path
-
-    def get_temporary_credentials(self) -> Optional[Dict[str, str]]:
-        url = f"https://{self.endpoint}/role-aliases/{self.role_alias}/credentials"
-        headers = {'x-amzn-iot-thingname': self.thing_name}
-
-        try:
-            response = requests.get(
-                url,
-                headers=headers,
-                cert=(self.cert_path, self.key_path),
-                verify=self.root_ca_path,
-                timeout=(10, 20)  # 10 seconds for connecting, 20 seconds for reading
-            )
-
-            if response.status_code == 200:
-                credentials = response.json()['credentials']
-                print("Temporary credentials obtained successfully.")
-                return credentials
-            else:
-                print(f"Failed to obtain credentials. Status code: {response.status_code}")
-                print(f"Response: {response.text}")
-                return None
-
-        except requests.exceptions.RequestException as e:
-            print(f"An error occurred: {e}")
-            return None
-        
-
 async def run_client(client):
     await client.signaling_client()
     
 async def main():
-    parser = argparse.ArgumentParser(description='Kinesis Video Streams WebRTC Client')
-    # parser.add_argument('--channel-arn', type=str, required=True, help='the ARN of the signaling channel')
-    parser.add_argument('--file-path', type=str, help='the path to video file to play (optional)')
-    # parser.add_argument('--use-device-certs', action='store_true', help='Use system certificates')
-    args = parser.parse_args()
 
+    if not AWS_ACCESS_KEY_ID:
+        raise Exception("AWS_ACCESS_KEY_ID environment variable should be configured.\ni.e. export AWS_ACCESS_KEY_ID=1234")
     if not AWS_DEFAULT_REGION:
         raise Exception("AWS_DEFAULT_REGION environment variable should be configured.\ni.e. export AWS_DEFAULT_REGION=us-west-2")
-
-    # if args.use_device_certs:
-    #     provider = IoTCredentialProvider(
-    #         endpoint=IOT_CREDENTIAL_PROVIDER,
-    #         region=AWS_DEFAULT_REGION,
-    #         thing_name=THING_NAME,
-    #         role_alias=ROLE_ALIAS,
-    #         cert_path=CERT_FILE,
-    #         key_path=KEY_FILE,
-    #         root_ca_path=ROOT_CA
-    #     )
-    #     credentials = provider.get_temporary_credentials()
-    #     if not credentials:
-    #         raise Exception("Failed to obtain temporary credentials")
-    # else:
-    #     credentials = None
-
-    credentials = {
-        "accessKeyId": AWS_ACCESS_KEY_ID,
-        "secretAccessKey": AWS_ACCESS_KEY_ID,
-        "sessionToken": AWS_SESSION_TOKEN
-    }
 
     client = KinesisVideoClient(
         client_id= "MASTER",
         region=AWS_DEFAULT_REGION,
         channel_arn=AWS_WEBRTC_CHANNEL,
-        credentials=credentials,
-        file_path=args.file_path
+        credentials=None,
+        file_path="/home/joshua/video-media-samples/big-buck-bunny-1080p-30sec.mp4"
     )
     
     await run_client(client)

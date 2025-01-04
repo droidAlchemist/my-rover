@@ -12,7 +12,10 @@ export AWS_WEBRTC_CHANNEL=arn:aws:kinesisvideo:ap-south-1:783058511096:channel/i
 
 ## Run script 
 
-python3 kvsWebRTCClientMaster.py --file-path /home/joshua/video-media-samples/big-buck-bunny-1080p-30sec.mp4
+python3 kvsWebRTCClientMaster.py                 
+
+
+python3 kvsWebRTCClientMaster.py --file-path big-buck-bunny-1080p-30sec.mp4
 
 
 python3 kvsWebRTCClientMaster.py --channel-arn arn:aws:kinesisvideo:[region]:[account-number]:channel/[channel-name]/[number] --file-path [your-video-file]
