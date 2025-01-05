@@ -3,8 +3,8 @@ from aiortc.contrib.media import MediaPlayer, MediaRelay
 import os
 
 class MediaHelper:
-    def __init__(self, file_path=None):
-        self.file_path = file_path
+    def __init__(self):
+        self.file_path = "/home/joshua/video-media-samples/big-buck-bunny-1080p-30sec.mp4"
 
     def create_media_track(self):
         relay = MediaRelay()

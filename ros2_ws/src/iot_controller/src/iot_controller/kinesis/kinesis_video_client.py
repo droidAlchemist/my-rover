@@ -1,4 +1,3 @@
-import asyncio
 import boto3
 import json
 import websockets
@@ -11,25 +10,14 @@ from botocore.awsrequest import AWSRequest
 from botocore.credentials import Credentials
 from botocore.session import Session
 from media_helper import MediaHelper
-import os
-# import sys
-# import logging
 
-# logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-
-THING_NAME = os.getenv('THING_NAME')
-AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION')
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_WEBRTC_CHANNEL = os.getenv('AWS_WEBRTC_CHANNEL')
-
-class KinesisWebRTCHelper:
-    def __init__(self, client_id, region, channel_arn, credentials, file_path=None):
+class KinesisVideoClient:
+    def __init__(self, client_id, region, channel_arn, credentials):
         self.client_id = client_id
         self.region = region
         self.channel_arn = channel_arn
         self.credentials = credentials
-        self.media_manager = MediaHelper(file_path)
+        self.media_manager = MediaHelper()
         if self.credentials:
             self.kinesisvideo = boto3.client('kinesisvideo', 
                                              region_name=self.region, 
