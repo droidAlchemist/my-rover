@@ -1,7 +1,7 @@
 
 import rclpy
 from rclpy.node import Node
-from ros2_ws.src.iot_controller.src.iot_controller.kinesis.kinesis_connection_helper import KinesisConnectionHelper
+from iot_controller.kinesis.kinesis_connection_helper import KinesisConnectionHelper
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from awscrt import mqtt5 
