@@ -16,11 +16,6 @@ const config = {
   },
   channelARN: VITE_AWS_SIGNALING_CHANNEL_ARN,
   region: VITE_AWS_REGION,
-  // Enable below lines in case local media available
-  // media: {
-  //   audio: true,
-  //   video: true,
-  // },
 };
 
 export function KinesisWebRTC() {
@@ -41,6 +36,8 @@ export function KinesisWebRTC() {
         playsinline={true}
         muted={true}
         url={peer?.media}
+        // width={1280}
+        // height={720}
       />
     </Box>
   );

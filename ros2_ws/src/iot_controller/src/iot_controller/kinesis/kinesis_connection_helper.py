@@ -1,7 +1,5 @@
 import asyncio
 from os import getenv
-# import sys
-# import logging
 from iot_controller.kinesis.kinesis_video_client import KinesisVideoClient
 
 THING_NAME = getenv('THING_NAME')
@@ -14,7 +12,6 @@ class KinesisConnectionHelper:
     def __init__(self, logger):
         self.is_aws_keys_defined()
         self.logger = logger       
-        # logging.basicConfig(level=logging.INFO, stream=sys.stdout)   
         self.loop = asyncio.get_event_loop()   
 
     def is_aws_keys_defined(self):
