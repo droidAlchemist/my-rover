@@ -10,11 +10,22 @@ AWS_ACCESS_KEY_ID = getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = getenv('AWS_SECRET_ACCESS_KEY')
 AWS_WEBRTC_CHANNEL = getenv('AWS_WEBRTC_CHANNEL')
 
+class CustomLogHandler(logging.Handler):
+    """Custom logs handler to send log messages to ROS2."""
+    def __init__(self, logger):
+        logging.Handler.__init__(self)
+        self.logger = logger
+
+    def emit(self, log_record):
+        self.logger.info(log_record)
+
 class KinesisConnectionHelper:
     def __init__(self, logger):
         self.is_aws_keys_defined()
         self.logger = logger        
-        logging.basicConfig(level=logging.INFO, stream=logger)   
+        logging.basicConfig(level=logging.INFO, handlers=[
+            CustomLogHandler()
+        ])   
         self.loop = asyncio.get_event_loop()   
 
     def is_aws_keys_defined(self):
