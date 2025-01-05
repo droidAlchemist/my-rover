@@ -47,13 +47,3 @@ class KinesisConnectionHelper:
     def stop(self):
         # Stop asyncio loop
         self.loop.stop()
-
-if __name__ == '__main__':
-    try:
-        kvs = KinesisConnectionHelper()
-        kvs.start()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        print("Closing kvs webrtc stream")        
-        kvs.stop()

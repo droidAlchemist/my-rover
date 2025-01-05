@@ -1,11 +1,11 @@
 
 import rclpy
 from rclpy.node import Node
-from iot_controller.kinesis.kinesis_connection_helper import KinesisConnectionHelper
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from awscrt import mqtt5 
 from iot_controller.connection_helper import ConnectionHelper
+from iot_controller.kinesis.kinesis_connection_helper import KinesisConnectionHelper
 import json
 import iot_controller.my_constants as my_constants
 
