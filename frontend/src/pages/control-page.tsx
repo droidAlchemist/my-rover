@@ -21,11 +21,7 @@ import {
   TelemetryMessageType,
 } from "@/types";
 import { mqtt } from "aws-iot-device-sdk-v2";
-import {
-  getBatteryPercentage,
-  getCameraCommand,
-  getCommandVelocity,
-} from "@/utils";
+import { getBatteryPercentage, getCameraCommand } from "@/utils";
 
 const { VOLTAGE, ODOMETRY, TEMPERATURE } = TELEMETRY_MESSAGE_TYPES;
 
@@ -41,18 +37,22 @@ export const ControlPage = () => {
   const onClickLed = useCallback((value: boolean) => {
     console.log(value);
   }, []);
-  const onClickCamera = useCallback((value: boolean) => {
-    console.log(value);
-    setCameraActive(value);
-    const cmd = getCameraCommand(value);
-    if (cmd && connection) {
-      connection.publish(
-        IOT_ROS2_TOPICS.CAMERA,
-        JSON.stringify(cmd),
-        mqtt.QoS.AtMostOnce,
-      );
-    }
-  }, []);
+
+  const onClickCamera = useCallback(
+    (value: boolean) => {
+      setCameraActive(value);
+      const cmd = getCameraCommand(value);
+      if (cmd && connection) {
+        console.log(cmd);
+        connection.publish(
+          IOT_ROS2_TOPICS.CAMERA,
+          JSON.stringify(cmd),
+          mqtt.QoS.AtMostOnce,
+        );
+      }
+    },
+    [connection],
+  );
 
   const setMessageHandler = useCallback((message: string) => {
     if (message) {

@@ -5,7 +5,7 @@ export const DRAWER_WIDTH = 240;
 export enum IOT_ROS2_TOPICS {
   "TELEMETRY" = "rover1/telemetry",
   "CONTROL" = "rover1/cmd_vel",
-  "CAMERA" = "rover1/cmd_vel",
+  "CAMERA" = "rover1/camera",
 }
 export enum TELEMETRY_MESSAGE_TYPES {
   "VOLTAGE" = "voltage",

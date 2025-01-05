@@ -10,7 +10,7 @@ AWS_ACCESS_KEY_ID = getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = getenv('AWS_SECRET_ACCESS_KEY')
 AWS_WEBRTC_CHANNEL = getenv('AWS_WEBRTC_CHANNEL')
 
-class KinesisStreamHelper:
+class KinesisConnectionHelper:
     def __init__(self):
         self.is_aws_keys_defined()
         logging.basicConfig(level=logging.INFO, stream=sys.stdout)   
@@ -50,7 +50,7 @@ class KinesisStreamHelper:
 
 if __name__ == '__main__':
     try:
-        kvs = KinesisStreamHelper()
+        kvs = KinesisConnectionHelper()
         kvs.start()
     except KeyboardInterrupt:
         pass
