@@ -1,5 +1,5 @@
 import platform
-from aiortc.contrib.media import MediaBlackhole, MediaPlayer, MediaRelay
+from aiortc.contrib.media import MediaPlayer, MediaRelay
 import os
 
 class MediaHelper:
