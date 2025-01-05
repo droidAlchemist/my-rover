@@ -1,7 +1,7 @@
 import asyncio
 from os import getenv
-import sys
-import logging
+# import sys
+# import logging
 from iot_controller.kinesis.kinesis_video_client import KinesisVideoClient
 
 THING_NAME = getenv('THING_NAME')
@@ -13,8 +13,8 @@ AWS_WEBRTC_CHANNEL = getenv('AWS_WEBRTC_CHANNEL')
 class KinesisConnectionHelper:
     def __init__(self, logger):
         self.is_aws_keys_defined()
-        # self.logger = logger       
-        logging.basicConfig(level=logging.INFO, stream=sys.stdout)   
+        self.logger = logger       
+        # logging.basicConfig(level=logging.INFO, stream=sys.stdout)   
         self.loop = asyncio.get_event_loop()   
 
     def is_aws_keys_defined(self):
@@ -33,21 +33,22 @@ class KinesisConnectionHelper:
         
     async def main(self):
         # Main function to start kvs webrtc streaming
-        # self.logger.info("Initialize kvs")
+        self.logger.info("Initialize kvs")
         self.client = KinesisVideoClient(
             client_id= "MASTER",
             region=AWS_DEFAULT_REGION,
             channel_arn=AWS_WEBRTC_CHANNEL,
-            credentials=None
+            credentials=None,
+            logger=self.logger
         )
         await self.run_client()
 
     def start(self):
         # Start asyncio loop
-        # self.logger.info("Try to start asynio loop for web rtc")
+        self.logger.info("Try to start asynio loop for web rtc")
         self.loop.run_until_complete(self.main())        
 
     def stop(self):
         # Stop asyncio loop
         self.loop.stop()
-        # self.logger.info("Try to stop webrtc asynio loop")
+        self.logger.info("Try to stop webrtc asynio loop")

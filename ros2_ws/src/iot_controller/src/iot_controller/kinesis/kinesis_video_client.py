@@ -12,7 +12,8 @@ from botocore.session import Session
 from iot_controller.kinesis.media_helper import MediaHelper
 
 class KinesisVideoClient:
-    def __init__(self, client_id, region, channel_arn, credentials):
+    def __init__(self, client_id, region, channel_arn, credentials, logger):
+        self.logger = logger
         self.client_id = client_id
         self.region = region
         self.channel_arn = channel_arn
@@ -20,11 +21,11 @@ class KinesisVideoClient:
         self.media_manager = MediaHelper()
         if self.credentials:
             self.kinesisvideo = boto3.client('kinesisvideo', 
-                                             region_name=self.region, 
-                                             aws_access_key_id=self.credentials['accessKeyId'],
-                                             aws_secret_access_key=self.credentials['secretAccessKey'],
-                                             aws_session_token=self.credentials['sessionToken']
-                                            )
+                region_name=self.region, 
+                aws_access_key_id=self.credentials['accessKeyId'],
+                aws_secret_access_key=self.credentials['secretAccessKey'],
+                aws_session_token=self.credentials['sessionToken']
+            )
         else:
             self.kinesisvideo = boto3.client('kinesisvideo', region_name=self.region)
         self.endpoints = None
@@ -123,22 +124,22 @@ class KinesisVideoClient:
         @pc.on('connectionstatechange')
         async def on_connectionstatechange():
             if client_id in self.PCMap:
-                print(f'[{client_id}] connectionState: {self.PCMap[client_id].connectionState}')
+                self.logger.info(f'[{client_id}] connectionState: {self.PCMap[client_id].connectionState}')
 
         @pc.on('iceconnectionstatechange')
         async def on_iceconnectionstatechange():
             if client_id in self.PCMap:
-                print(f'[{client_id}] iceConnectionState: {self.PCMap[client_id].iceConnectionState}')
+                self.logger.info(f'[{client_id}] iceConnectionState: {self.PCMap[client_id].iceConnectionState}')
 
         @pc.on('icegatheringstatechange')
         async def on_icegatheringstatechange():
             if client_id in self.PCMap:
-                print(f'[{client_id}] iceGatheringState: {self.PCMap[client_id].iceGatheringState}')
+                self.logger.info(f'[{client_id}] iceGatheringState: {self.PCMap[client_id].iceGatheringState}')
 
         @pc.on('signalingstatechange')
         async def on_signalingstatechange():
             if client_id in self.PCMap:
-                print(f'[{client_id}] signalingState: {self.PCMap[client_id].signalingState}')
+                self.logger.info(f'[{client_id}] signalingState: {self.PCMap[client_id].signalingState}')
 
         @pc.on('track')
         def on_track(track):
@@ -153,10 +154,10 @@ class KinesisVideoClient:
                         try:
                             self.DCMap[i].send(f'broadcast: {dc_message}')
                         except Exception as e:
-                            print(f"Error sending message: {e}")
+                            self.logger.info(f"Error sending message: {e}")
                     else:
-                         print(f"Data channel {i} is not open. Current state: {self.DCMap[i].readyState}")
-                print(f'[{channel.label}] datachannel_message: {dc_message}')
+                         self.logger.info(f"Data channel {i} is not open. Current state: {self.DCMap[i].readyState}")
+                self.logger.info(f'[{channel.label}] datachannel_message: {dc_message}')
 
         if audio_track:
             self.PCMap[client_id].addTrack(audio_track)
@@ -185,7 +186,7 @@ class KinesisVideoClient:
         while True:
             try:
                 async with websockets.connect(wss_url) as websocket:
-                    print('Signaling Server Connected!')
+                    self.logger.info('Signaling Server Connected!')
                     async for message in websocket:
                         msg_type, payload, client_id = self.decode_msg(message)
                         if msg_type == 'SDP_OFFER':
@@ -193,6 +194,6 @@ class KinesisVideoClient:
                         elif msg_type == 'ICE_CANDIDATE':
                             await self.handle_ice_candidate(payload, client_id)
             except websockets.ConnectionClosed:
-                print('Connection closed, reconnecting...')
+                self.logger.info('Connection closed, reconnecting...')
                 wss_url = self.create_wss_url()
                 continue
