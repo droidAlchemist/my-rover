@@ -1,14 +1,7 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    # Declare launch arguments
-    iot_mqtt_arg = DeclareLaunchArgument(
-        'path_for_config', default_value='$IOT_CONFIG_FILE',
-        description='Pass the certificate config path'
-    )
 
     # Define the nodes to be launched
     iot_telemetry_node = Node(

@@ -4,6 +4,7 @@ from os import getenv
 from concurrent.futures import Future
 import json  
 import uuid
+import iot_controller.my_constants as my_constants
 
 IOT_CONFIG_FILE = getenv('IOT_CONFIG_FILE')
 
@@ -44,10 +45,10 @@ class ConnectionHelper:
     
     def cleanup(self):
         # Unsubscribe
-        self.logger.info("Unsubscribing from topic '{}'".format(SUBSCRIBE_IOT_CONTROL_TOPIC))
+        self.logger.info("Unsubscribing from topic '{}'".format(my_constants.SUBSCRIBE_IOT_CONTROL_TOPIC))
         unsubscribe_future = self.client.unsubscribe(unsubscribe_packet=mqtt5.UnsubscribePacket(
-            topic_filters=[SUBSCRIBE_IOT_CONTROL_TOPIC]))
-        unsuback = unsubscribe_future.result(WAIT_TIME_SECONDS)
+            topic_filters=[my_constants.SUBSCRIBE_IOT_CONTROL_TOPIC]))
+        unsuback = unsubscribe_future.result(my_constants.WAIT_TIME_SECONDS)
         self.logger.info("Unsubscribed with {}".format(unsuback.reason_codes))
 
         self.logger.info("Stopping Client")

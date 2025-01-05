@@ -8,7 +8,7 @@ import json
 import serial
 from time import sleep
 from iot_controller.connection_helper import ConnectionHelper
-import my_constants
+import iot_controller.my_constants as my_constants
 
 # Initialize serial communication with the UGV
 serial_port = '/dev/ttyAMA0'

@@ -6,7 +6,7 @@ from geometry_msgs.msg import Twist
 from awscrt import mqtt5 
 from iot_controller.connection_helper import ConnectionHelper
 import json
-import my_constants
+import iot_controller.my_constants as my_constants
 
 class MqttListener(Node):
     def __init__(self):
