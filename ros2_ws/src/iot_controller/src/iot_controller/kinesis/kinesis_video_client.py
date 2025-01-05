@@ -9,7 +9,7 @@ from botocore.auth import SigV4QueryAuth
 from botocore.awsrequest import AWSRequest
 from botocore.credentials import Credentials
 from botocore.session import Session
-from media_helper import MediaHelper
+from iot_controller.kinesis.media_helper import MediaHelper
 
 class KinesisVideoClient:
     def __init__(self, client_id, region, channel_arn, credentials):

@@ -2,7 +2,7 @@ import asyncio
 from os import getenv
 import sys
 import logging
-from kinesis_video_client import KinesisVideoClient
+from iot_controller.kinesis.kinesis_video_client import KinesisVideoClient
 
 THING_NAME = getenv('THING_NAME')
 AWS_DEFAULT_REGION = getenv('AWS_DEFAULT_REGION')
