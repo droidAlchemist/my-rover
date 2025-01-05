@@ -3,7 +3,7 @@ import os
 import sys
 import logging
 
-from iot_controller.kinesis.kinesis_webrtc_helper import KinesisWebRTCHelper
+from kinesis_webrtc_helper import KinesisWebRTCHelper
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 

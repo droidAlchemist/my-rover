@@ -10,7 +10,7 @@ from botocore.auth import SigV4QueryAuth
 from botocore.awsrequest import AWSRequest
 from botocore.credentials import Credentials
 from botocore.session import Session
-from iot_controller.kinesis.media_helper import MediaHelper
+from media_helper import MediaHelper
 import os
 # import sys
 # import logging
