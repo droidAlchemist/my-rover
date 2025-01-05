@@ -54,7 +54,7 @@ class ConnectionHelper:
         self.logger.info("Stopping Client")
         self.client.stop()
 
-        self.future_stopped.result(WAIT_TIME_SECONDS)
+        self.future_stopped.result(my_constants.WAIT_TIME_SECONDS)
         self.logger.info("Client Stopped!")
 
     # Callback when any publish is received
@@ -85,7 +85,7 @@ class ConnectionHelper:
         self.logger.info("MQTT5 Client Created!")
         self.logger.info(f"Connecting to endpoint with Client ID '{clientID}'...")
         self.client.start()        
-        lifecycle_connect_success_data = self.future_connection_success.result(WAIT_TIME_SECONDS)
+        lifecycle_connect_success_data = self.future_connection_success.result(my_constants.WAIT_TIME_SECONDS)
         connack_packet = lifecycle_connect_success_data.connack_packet
         negotiated_settings = lifecycle_connect_success_data.negotiated_settings
         self.logger.info(f"Connected to endpoint with Client ID:'{clientID}' with reason_code:{repr(connack_packet.reason_code)}")
