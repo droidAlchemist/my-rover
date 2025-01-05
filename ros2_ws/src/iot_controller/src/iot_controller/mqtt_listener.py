@@ -52,9 +52,12 @@ class MqttListener(Node):
         """Start/Stop streaming of camera using Kinesis WebRTC"""
         action = commandDict["action"]
         if action == "start":
-            self.get_logger().info("Start streaming camera")
-            self.is_camera_on = True
-            self.kvs.start()
+            if self.is_camera_on:
+                self.get_logger().info("Streaming already started!")
+            else:    
+                self.get_logger().info("Start streaming camera")
+                self.is_camera_on = True
+                self.kvs.start()
         else:
             self.get_logger().info("Stop streaming camera")
             self.is_camera_on = False
@@ -94,7 +97,6 @@ def main(args=None):
     # Destroy the node
     minimal_subscriber.destroy_node()
     rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()
