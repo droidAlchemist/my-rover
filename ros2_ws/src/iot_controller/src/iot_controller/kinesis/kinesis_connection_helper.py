@@ -17,15 +17,21 @@ class CustomLogHandler(logging.Handler):
         self.logger = logger
 
     def emit(self, log_record):
-        self.logger.info(log_record)
+        self.logger.info(log_record.message)
 
 class KinesisConnectionHelper:
     def __init__(self, logger):
         self.is_aws_keys_defined()
-        self.logger = logger        
-        logging.basicConfig(level=logging.INFO, handlers=[
-            CustomLogHandler(logger)
-        ])   
+        self.logger = logger       
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s') 
+        # logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+        logging.basicConfig(level=logging.INFO, 
+            format=formatter,
+            handlers=[
+                logging.StreamHandler(),
+                CustomLogHandler(logger)
+            ]
+        )   
         self.loop = asyncio.get_event_loop()   
 
     def is_aws_keys_defined(self):
@@ -55,8 +61,8 @@ class KinesisConnectionHelper:
 
     def start(self):
         # Start asyncio loop
-        self.loop.run_until_complete(self.main())
-        self.logger.info("Start asynio loop for web rtc")
+        self.logger.info("Try to start asynio loop for web rtc")
+        self.loop.run_until_complete(self.main())        
 
     def stop(self):
         # Stop asyncio loop
