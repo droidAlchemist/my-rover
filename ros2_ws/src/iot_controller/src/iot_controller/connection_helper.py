@@ -1,22 +1,26 @@
 from awsiot import mqtt5_client_builder
-from awscrt import mqtt5, http
+from awscrt import mqtt5
+from os import getenv
 from concurrent.futures import Future
 import json  
 import uuid
 
-SUBSCRIBE_IOT_CONTROL_TOPIC = "cmd_vel"
-TIMEOUT = 100
+IOT_CONFIG_FILE = getenv('IOT_CONFIG_FILE')
 
 class ConnectionHelper:
-    def __init__(self, logger, path_for_config="", on_receive_func = None):
-        self.path_for_config = path_for_config
+    def __init__(self, logger, on_receive_func = None):
+        # Check if config file is exported
+        if not IOT_CONFIG_FILE:
+            raise Exception("IOT_CONFIG_FILE environment variable should be configured.\ni.e. export IOT_CONFIG_FILE=/file/path")
+        # Setup logger
         self.logger = logger
+        # Setup thread
         self.future_stopped = Future()
         self.future_connection_success = Future() 
-
+        # Setup on recieve function (optional) - for listener
         self.on_receive_func = on_receive_func
 
-        with open(path_for_config) as f:
+        with open(IOT_CONFIG_FILE) as f:
           cert_data = json.load(f)
 
         self.logger.info("Config we are loading is :\n{}".format(cert_data))
@@ -43,13 +47,13 @@ class ConnectionHelper:
         self.logger.info("Unsubscribing from topic '{}'".format(SUBSCRIBE_IOT_CONTROL_TOPIC))
         unsubscribe_future = self.client.unsubscribe(unsubscribe_packet=mqtt5.UnsubscribePacket(
             topic_filters=[SUBSCRIBE_IOT_CONTROL_TOPIC]))
-        unsuback = unsubscribe_future.result(TIMEOUT)
+        unsuback = unsubscribe_future.result(WAIT_TIME_SECONDS)
         self.logger.info("Unsubscribed with {}".format(unsuback.reason_codes))
 
         self.logger.info("Stopping Client")
         self.client.stop()
 
-        self.future_stopped.result(TIMEOUT)
+        self.future_stopped.result(WAIT_TIME_SECONDS)
         self.logger.info("Client Stopped!")
 
     # Callback when any publish is received
@@ -60,7 +64,7 @@ class ConnectionHelper:
         payload = publish_packet.payload
         self.logger.info("Received message from topic'{}':{}".format(topic, payload))
         if self.on_receive_func != None:
-            self.on_receive_func(payload)
+            self.on_receive_func(payload, topic)
 
     def connect_to_endpoint(self, cert_data):
         clientID = cert_data["clientID"] + str(uuid.uuid4())
@@ -80,7 +84,7 @@ class ConnectionHelper:
         self.logger.info("MQTT5 Client Created!")
         self.logger.info(f"Connecting to endpoint with Client ID '{clientID}'...")
         self.client.start()        
-        lifecycle_connect_success_data = self.future_connection_success.result(TIMEOUT)
+        lifecycle_connect_success_data = self.future_connection_success.result(WAIT_TIME_SECONDS)
         connack_packet = lifecycle_connect_success_data.connack_packet
         negotiated_settings = lifecycle_connect_success_data.negotiated_settings
         self.logger.info(f"Connected to endpoint with Client ID:'{clientID}' with reason_code:{repr(connack_packet.reason_code)}")

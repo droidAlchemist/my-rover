@@ -8,9 +8,7 @@ import json
 import serial
 from time import sleep
 from iot_controller.connection_helper import ConnectionHelper
-
-RETRY_WAIT_TIME_SECONDS = 100
-TELEMETRY_MESSAGE_TOPIC = "ros2/telemetry/topic"
+import my_constants
 
 # Initialize serial communication with the UGV
 serial_port = '/dev/ttyAMA0'
@@ -32,17 +30,13 @@ def todict(obj):
 class MqttPublisher(Node):
     def __init__(self):
         super().__init__('mqtt_publisher')
-        self.declare_parameter("path_for_config", "")
-        self.declare_parameter("discover_endpoints", False)
-
-        path_for_config = self.get_parameter("path_for_config").get_parameter_value().string_value
-        self.connection_helper = ConnectionHelper(self.get_logger(), path_for_config)
+        self.connection_helper = ConnectionHelper(self.get_logger())
 
         self.init_subs()
         self.init_rover()
 
     def init_rover(self):
-        """Setup to UGV Rover to send telemetry"""
+        """Setup to Rasp Rover to send telemetry"""
         ctrl_data = json.dumps({
             "T":900,
             "main": 1,
@@ -64,23 +58,23 @@ class MqttPublisher(Node):
         # Create a subscription to the /voltage topic to get the voltage data
         self.create_subscription(
             Float32,
-            '/voltage',
+            my_constants.ROS2_VOLTAGE_TOPIC,
             self.voltage_listener_callback,
             10
         )
         # Create a subscription to the /temperature topic to get the temperature data
         self.create_subscription(
             Float32,
-            '/temperature',
+            my_constants.ROS2_TEMPERATURE_TOPIC,
             self.temperature_listener_callback,
             10
         )
         # Create a subscription to the /odom topic to get the odometry data
-        self.create_subscription(Float32MultiArray, '/odom/odom_raw', self.odom_callback, 10)
+        self.create_subscription(Float32MultiArray, my_constants.ROS2_ODOMETRY_TOPIC, self.odom_callback, 10)
         # Create a subscription to the /imu/data topic to get the robot's imu data
         self.create_subscription(
             Imu,
-            'imu/data_raw',
+            my_constants.ROS2_IMU_TOPIC,
             self.robot_imu_callback,
             10
         )
@@ -89,12 +83,12 @@ class MqttPublisher(Node):
         """Callback for the ros2 telemetry topic"""
         self.get_logger().info("Received ROS2 data - {}\nPublishing to AWS IoT".format(message_json))    
         publish_future = self.connection_helper.client.publish(mqtt5.PublishPacket(
-            topic=TELEMETRY_MESSAGE_TOPIC,
+            topic=my_constants.TELEMETRY_MESSAGE_TOPIC,
             payload=json.dumps(message_json),
             qos=mqtt5.QoS.AT_LEAST_ONCE
         ))
 
-        publish_completion_data = publish_future.result(RETRY_WAIT_TIME_SECONDS)
+        publish_completion_data = publish_future.result(my_constants.WAIT_TIME_SECONDS)
         print("PubAck received with {}".format(repr(publish_completion_data.puback.reason_code)))
 
     def voltage_listener_callback(self, msg):

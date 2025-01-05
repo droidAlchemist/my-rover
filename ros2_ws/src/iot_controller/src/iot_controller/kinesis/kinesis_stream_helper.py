@@ -1,22 +1,23 @@
 import asyncio
-import os
+from os import getenv
 import sys
 import logging
 from kinesis_video_client import KinesisVideoClient
 
-THING_NAME = os.getenv('THING_NAME')
-AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION')
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_WEBRTC_CHANNEL = os.getenv('AWS_WEBRTC_CHANNEL')
+THING_NAME = getenv('THING_NAME')
+AWS_DEFAULT_REGION = getenv('AWS_DEFAULT_REGION')
+AWS_ACCESS_KEY_ID = getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = getenv('AWS_SECRET_ACCESS_KEY')
+AWS_WEBRTC_CHANNEL = getenv('AWS_WEBRTC_CHANNEL')
 
 class KinesisStreamHelper:
     def __init__(self):
         self.is_aws_keys_defined()
-        logging.basicConfig(level=logging.INFO, stream=sys.stdout)        
-        
+        logging.basicConfig(level=logging.INFO, stream=sys.stdout)   
+        self.loop = asyncio.get_event_loop()   
 
     def is_aws_keys_defined(self):
+        # check if necessary keys are exported
         if not AWS_WEBRTC_CHANNEL:
             raise Exception("AWS_WEBRTC_CHANNEL environment variable should be configured.\ni.e. export AWS_WEBRTC_CHANNEL=arn.yxxyx")
         if not AWS_ACCESS_KEY_ID:
@@ -30,16 +31,29 @@ class KinesisStreamHelper:
         await self.client.signaling_client()
         
     async def main(self):
-
+        # Main function to start kvs webrtc streaming
         self.client = KinesisVideoClient(
             client_id= "MASTER",
             region=AWS_DEFAULT_REGION,
             channel_arn=AWS_WEBRTC_CHANNEL,
             credentials=None
         )
-        
         await self.run_client()
 
+    def start(self):
+        # Start asyncio loop
+        self.loop.run_until_complete(self.main())
+
+    def stop(self):
+        # Stop asyncio loop
+        self.loop.stop()
+
 if __name__ == '__main__':
-    kvs = KinesisStreamHelper()
-    asyncio.run(kvs.main())
+    try:
+        kvs = KinesisStreamHelper()
+        kvs.start()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print("Closing kvs webrtc stream")        
+        kvs.stop()

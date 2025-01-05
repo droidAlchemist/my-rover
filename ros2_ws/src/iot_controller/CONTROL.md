@@ -17,7 +17,7 @@ colcon build --packages-select iot_controller
 
 export IOT_CONFIG_FILE=~/my-rover/ros2_ws/src/iot_controller/iot_certs_and_config/iot_config.json
 source ~/my-rover/ros2_ws/install/setup.bash
-ros2 run iot_controller mqtt_telemetry_pub --ros-args --param path_for_config:=$IOT_CONFIG_FILE
+ros2 run iot_controller mqtt_publisher --ros-args --param path_for_config:=$IOT_CONFIG_FILE
 
 eg. 
 {
@@ -30,7 +30,7 @@ eg.
 export IOT_CONFIG_FILE=~/my-rover/ros2_ws/src/iot_controller/iot_certs_and_config/iot_config.json
 source ~/my-rover/ros2_ws/install/setup.bash
 
-ros2 run iot_controller mqtt_control_sub --ros-args --param path_for_config:=$IOT_CONFIG_FILE
+ros2 run iot_controller mqtt_listener --ros-args --param path_for_config:=$IOT_CONFIG_FILE
 
 eg.
 
