@@ -3,8 +3,9 @@ export const DRAWER_WIDTH = 240;
 
 // Telemetry
 export enum IOT_ROS2_TOPICS {
-  "TELEMETRY" = "exit",
-  "CONTROL1" = "cmd_vel",
+  "TELEMETRY" = "rover1/telemetry",
+  "CONTROL" = "rover1/cmd_vel",
+  "CAMERA" = "rover1/cmd_vel",
 }
 export enum TELEMETRY_MESSAGE_TYPES {
   "VOLTAGE" = "voltage",
@@ -13,6 +14,9 @@ export enum TELEMETRY_MESSAGE_TYPES {
   "POSE" = "pose",
   "IMU" = "imu",
 }
+
+// Camera Control
+export type CAMERA_ACTIONS = "stop" | "start";
 
 // ROBOT Control
 

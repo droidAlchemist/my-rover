@@ -15,7 +15,7 @@ export function RobotControllerCard({ connection }: RobotControllerCardProps) {
       const cmd = getCommandVelocity(d);
       if (cmd && connection) {
         connection.publish(
-          IOT_ROS2_TOPICS.CONTROL1,
+          IOT_ROS2_TOPICS.CONTROL,
           JSON.stringify(cmd),
           mqtt.QoS.AtMostOnce,
         );

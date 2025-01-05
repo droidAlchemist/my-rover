@@ -136,6 +136,8 @@ def main(args=None):
         minimal_subscriber = MqttPublisher()
         rclpy.spin(minimal_subscriber)
     except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
+        pass
+    finally:
         # Do cleanup
         minimal_subscriber.connection_helper.cleanup()
     # Destroy the node

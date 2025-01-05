@@ -1,4 +1,5 @@
 import {
+  IotCameraMessageType,
   IotVelocityMessageType,
   JoystickUpdateEventType,
   ROBOT_CONTROL_MULTIPLIER,
@@ -59,6 +60,13 @@ export const getBatteryPercentage = (voltage: number) => {
     batteryPercentage = 100;
   }
   return batteryPercentage;
+};
+
+export const getCameraCommand = (active: boolean) => {
+  const cmd: IotCameraMessageType = {
+    action: active ? "start" : "stop",
+  };
+  return cmd;
 };
 
 /* 

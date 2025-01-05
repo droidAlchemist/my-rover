@@ -21,13 +21,18 @@ import {
   TelemetryMessageType,
 } from "@/types";
 import { mqtt } from "aws-iot-device-sdk-v2";
-import { getBatteryPercentage } from "@/utils";
+import {
+  getBatteryPercentage,
+  getCameraCommand,
+  getCommandVelocity,
+} from "@/utils";
 
 const { VOLTAGE, ODOMETRY, TEMPERATURE } = TELEMETRY_MESSAGE_TYPES;
 
 export const ControlPage = () => {
   const credentials = useAwsCredentials();
   const connection = useAwsIotMqtt(credentials);
+  const [cameraActive, setCameraActive] = useState<boolean>();
   const [voltageData, setVoltageData] = useState<string>();
   const [temperatureData, setTemperatureData] = useState<string>();
   const [batteryPercent, setBatteryPercent] = useState<string>("0%");
@@ -38,6 +43,15 @@ export const ControlPage = () => {
   }, []);
   const onClickCamera = useCallback((value: boolean) => {
     console.log(value);
+    setCameraActive(value);
+    const cmd = getCameraCommand(value);
+    if (cmd && connection) {
+      connection.publish(
+        IOT_ROS2_TOPICS.CAMERA,
+        JSON.stringify(cmd),
+        mqtt.QoS.AtMostOnce,
+      );
+    }
   }, []);
 
   const setMessageHandler = useCallback((message: string) => {
@@ -102,9 +116,9 @@ export const ControlPage = () => {
             <Grid size={{ xs: 12, md: 6, lg: 4 }}>
               <StatusInfoCard
                 title="Camera 1"
-                count="OFF"
+                count={cameraActive ? "ON" : "OFF"}
                 gradientColor="linear-gradient(310deg,#8A2387,#FF0080)"
-                activeStatus={false}
+                activeStatus={cameraActive}
                 onAction={onClickCamera}
                 icon={<Camera />}
                 percentage={{
@@ -130,7 +144,7 @@ export const ControlPage = () => {
             </Grid>
             <Grid size={{ xs: 12 }}>
               {/* Show video data using kinesis from ROS2 */}
-              {/* <VideoStreaming /> */}
+              <VideoStreaming />
             </Grid>
           </Grid>
         </Grid>

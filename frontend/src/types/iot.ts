@@ -1,4 +1,5 @@
 import {
+  CAMERA_ACTIONS,
   DIRECTION_TYPES,
   MOVEMENT_TYPES,
   TELEMETRY_MESSAGE_TYPES,
@@ -41,6 +42,10 @@ export type CoordinateType = {
   x: number;
   y: number;
   z: number;
+};
+
+export type IotCameraMessageType = {
+  action: CAMERA_ACTIONS;
 };
 
 export type IotVelocityMessageType = {

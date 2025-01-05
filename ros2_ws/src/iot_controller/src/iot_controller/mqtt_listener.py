@@ -12,16 +12,21 @@ class MqttListener(Node):
     def __init__(self):
         super().__init__('mqtt_listener')
         self.connection_helper = ConnectionHelper(self.get_logger(), self.on_message_received)
-
+        # Initialize subscription
         self.init_subs()
 
     def init_subs(self):
         """Subscribe to AWS IOT topics"""
-        self.get_logger().info("Subscribing to AWS IoT core robot control topic cmd_vel")
+        self.get_logger().info("Subscribing to AWS IOT Core topics")
         subscribe_future = self.connection_helper.client.subscribe(subscribe_packet=mqtt5.SubscribePacket(
-        subscriptions=[mqtt5.Subscription(
-            topic_filter=my_constants.SUBSCRIBE_IOT_CONTROL_TOPIC,
-            qos=mqtt5.QoS.AT_LEAST_ONCE)]
+        subscriptions=[
+                mqtt5.Subscription(
+                topic_filter=my_constants.SUBSCRIBE_IOT_CONTROL_TOPIC,
+                qos=mqtt5.QoS.AT_LEAST_ONCE),
+                mqtt5.Subscription(
+                topic_filter=my_constants.SUBSCRIBE_CAMERA_TOPIC,
+                qos=mqtt5.QoS.AT_LEAST_ONCE)
+            ]
         ))
         suback = subscribe_future.result(my_constants.WAIT_TIME_SECONDS)
         self.get_logger().info("Subscribed with {}".format(suback.reason_codes))
@@ -73,6 +78,8 @@ def main(args=None):
         rclpy.spin(minimal_subscriber)
         rclpy.spin(vel_pub)
     except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
+        pass
+    finally:
         # Do cleanup
         minimal_subscriber.connection_helper.cleanup()
     
