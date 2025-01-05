@@ -12,5 +12,5 @@ export AWS_WEBRTC_CHANNEL=arn:aws:kinesisvideo:ap-south-1:783058511096:channel/i
 
 ## Run script 
 
-python3 kinesis_video_master.py                 
+ros2 run iot_controller mqtt_listener               
 

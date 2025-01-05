@@ -1,7 +1,6 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from awscrt import mqtt5 
 from iot_controller.connection_helper import ConnectionHelper
@@ -20,7 +19,7 @@ class MqttListener(Node):
 
     def init_kinesis(self):
         """Setup kinesis web rtc connection"""
-        self.kvs = KinesisConnectionHelper()
+        self.kvs = KinesisConnectionHelper(self.get_logger())
         self.is_camera_on = False        
 
     def init_subs(self):
