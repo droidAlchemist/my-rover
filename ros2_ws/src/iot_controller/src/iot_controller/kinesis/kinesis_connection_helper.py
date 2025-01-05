@@ -24,7 +24,7 @@ class KinesisConnectionHelper:
         self.is_aws_keys_defined()
         self.logger = logger        
         logging.basicConfig(level=logging.INFO, handlers=[
-            CustomLogHandler()
+            CustomLogHandler(logger)
         ])   
         self.loop = asyncio.get_event_loop()   
 
