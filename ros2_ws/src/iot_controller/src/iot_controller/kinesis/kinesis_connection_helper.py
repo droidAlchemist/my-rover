@@ -13,7 +13,7 @@ AWS_WEBRTC_CHANNEL = getenv('AWS_WEBRTC_CHANNEL')
 class KinesisConnectionHelper:
     def __init__(self, logger):
         self.is_aws_keys_defined()
-        self.logger = logger       
+        # self.logger = logger       
         logging.basicConfig(level=logging.INFO, stream=sys.stdout)   
         self.loop = asyncio.get_event_loop()   
 
@@ -33,7 +33,7 @@ class KinesisConnectionHelper:
         
     async def main(self):
         # Main function to start kvs webrtc streaming
-        self.logger.info("Initialize kvs")
+        # self.logger.info("Initialize kvs")
         self.client = KinesisVideoClient(
             client_id= "MASTER",
             region=AWS_DEFAULT_REGION,
@@ -44,10 +44,10 @@ class KinesisConnectionHelper:
 
     def start(self):
         # Start asyncio loop
-        self.logger.info("Try to start asynio loop for web rtc")
+        # self.logger.info("Try to start asynio loop for web rtc")
         self.loop.run_until_complete(self.main())        
 
     def stop(self):
         # Stop asyncio loop
         self.loop.stop()
-        self.logger.info("Try to stop webrtc asynio loop")
+        # self.logger.info("Try to stop webrtc asynio loop")
