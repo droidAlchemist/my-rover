@@ -1,12 +1,70 @@
 import {
   IotCameraMessageType,
   IotVelocityMessageType,
-  JoystickUpdateEventType,
-  ROBOT_CONTROL_MULTIPLIER,
+  ROBOT_ANGULAR_MULTIPLIER,
+  ROBOT_MAX_ANGULAR_VELOCITY,
+  ROBOT_MAX_LINEAR_VELOCITY,
+  ROBOT_VELOCITY_MULTIPLIER,
 } from "@/types";
+import { Direction, IJoystickChangeValue } from "rc-joystick";
 
 export const calculateVelocity = (value: number) => {
-  return value * ROBOT_CONTROL_MULTIPLIER;
+  let velocity = value * ROBOT_VELOCITY_MULTIPLIER;
+  if (velocity > ROBOT_MAX_LINEAR_VELOCITY) {
+    velocity = ROBOT_MAX_LINEAR_VELOCITY;
+  }
+  return velocity;
+};
+
+export const calculateAngularVelocity = (value: number) => {
+  let angularVelocity = value * ROBOT_ANGULAR_MULTIPLIER;
+  if (angularVelocity > ROBOT_MAX_ANGULAR_VELOCITY) {
+    angularVelocity = ROBOT_MAX_ANGULAR_VELOCITY;
+  }
+  return angularVelocity;
+};
+
+export const getCameraCommand = (active: boolean) => {
+  const cmd: IotCameraMessageType = {
+    action: active ? "start" : "stop",
+  };
+  return cmd;
+};
+
+/* 
+  ROS2 Commands: forward  --> x   backward --> -x   left --> z    right -> -z
+  For Joystick control convert y --> linear x and x --> angular z  
+  Send either linear velocity or angular basedon direction
+*/
+export const getCommandVelocity = (d: IJoystickChangeValue) => {
+  console.log(d);
+  let cmd: IotVelocityMessageType = {
+    linear: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+    angular: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+  };
+  if (d.direction === Direction.Top || d.direction === Direction.Bottom) {
+    cmd.linear.x = calculateVelocity(d.distance);
+    if (d.direction === Direction.Bottom) {
+      cmd.linear.x = -cmd.linear.x;
+    }
+  } else if (
+    d.direction === Direction.Left ||
+    d.direction === Direction.Right
+  ) {
+    cmd.angular.z = calculateAngularVelocity(d.distance);
+    if (d.direction === Direction.Left) {
+      cmd.angular.z = -cmd.angular.z;
+    }
+  }
+  return cmd;
 };
 
 export const withErrorLog =
@@ -17,20 +75,6 @@ export const withErrorLog =
   };
 
 export const roundDecimal = (d?: string) => (d ? parseFloat(d).toFixed(2) : 0);
-
-export const caclulateBatteryPercent = (volt: number) => {
-  const y = 0.2777 * volt * 10 * 2 - 5.9451 * volt + 31.809;
-  if (y > 0 && y < 2) return 0;
-  return y.toFixed(2);
-};
-
-export const caclulateBatteryPercent2 = (volt: number) => {
-  const high = 12.25;
-  const low = 10.5;
-  let sum = ((volt - low) / (high - low)) * 100;
-  if (Math.round(sum) >= 100) sum = 100; // if greater than 100% then keep it there.
-  return sum.toFixed(2);
-};
 
 export const getBatteryPercentage = (voltage: number) => {
   let batteryPercentage = 0;
@@ -60,36 +104,4 @@ export const getBatteryPercentage = (voltage: number) => {
     batteryPercentage = 100;
   }
   return batteryPercentage;
-};
-
-export const getCameraCommand = (active: boolean) => {
-  const cmd: IotCameraMessageType = {
-    action: active ? "start" : "stop",
-  };
-  return cmd;
-};
-
-/* 
-  ROS2 Commands: forward  --> x   backward --> -x   left --> z    right -> -z
-  For Joystick control convert y --> linear x and x --> angular z  
-*/
-export const getCommandVelocity = (d: JoystickUpdateEventType) => {
-  let cmd: IotVelocityMessageType = {
-    linear: {
-      x: 0,
-      y: 0,
-      z: 0,
-    },
-    angular: {
-      x: 0,
-      y: 0,
-      z: 0,
-    },
-  };
-  if (d.type === "move") {
-    cmd.linear.x = calculateVelocity(d.y);
-    cmd.angular.z = d.x;
-    return cmd;
-  }
-  return undefined;
 };

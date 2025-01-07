@@ -144,7 +144,7 @@ export const ControlPage = () => {
             </Grid>
             <Grid size={{ xs: 12 }}>
               {/* Show video data using kinesis from ROS2 */}
-              <VideoStreaming />
+              {/* <VideoStreaming /> */}
             </Grid>
           </Grid>
         </Grid>
@@ -160,7 +160,7 @@ export const ControlPage = () => {
               }}
             />
             {/* Show Lidar data */}
-            <LidarCard image="lidar.jpg" />
+            {/* <LidarCard image="lidar.jpg" /> */}
             {/* Control robot by sending x,z pos using IOT Core to ROS2 */}
             <RobotControllerCard connection={connection} />
           </Box>

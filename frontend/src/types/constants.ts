@@ -22,7 +22,13 @@ export type CAMERA_ACTIONS = "stop" | "start";
 
 export type DIRECTION_TYPES = "FORWARD" | "RIGHT" | "LEFT" | "BACKWARD";
 export type MOVEMENT_TYPES = "move" | "stop" | "start";
-export const ROBOT_CONTROL_MULTIPLIER = 0.5;
+
+// Rasp Rover params
+export const ROBOT_MAX_LINEAR_VELOCITY = 0.65;
+export const ROBOT_MAX_ANGULAR_VELOCITY = 0.5;
+// Multiplier to smoothen velocity
+export const ROBOT_VELOCITY_MULTIPLIER = 0.01;
+export const ROBOT_ANGULAR_MULTIPLIER = 0.01;
 
 // Kinesis WebRTC
 export const ERROR_CHANNEL_ARN_MISSING = "Missing channel ARN";
