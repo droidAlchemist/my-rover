@@ -4,22 +4,20 @@ import os
 
 class MediaHelper:
     def __init__(self):
-        self.file_path = "/home/joshua/video-media-samples/big-buck-bunny-1080p-30sec.mp4"
+        # Do init
+        print("Init media")
 
     def create_media_track(self):
         relay = MediaRelay()
         options = {'framerate': '30', 'video_size': '1280x720'}
         system = platform.system()
 
-        if self.file_path and not os.path.exists(self.file_path):
-            raise FileNotFoundError(f"The file {self.file_path} does not exist.")
-
         if system == 'Darwin':
-            media = MediaPlayer('default:default', format='avfoundation', options=options) if not self.file_path else MediaPlayer(self.file_path)
+            media = MediaPlayer('default:default', format='avfoundation', options=options)
         elif system == 'Windows':
             media = MediaPlayer('video=Integrated Camera', format='dshow', options=options)
         elif system == 'Linux':
-            media = MediaPlayer('/dev/video0', format='v4l2', options=options) if not self.file_path else MediaPlayer(self.file_path)
+            media = MediaPlayer('/dev/video0', format='v4l2', options=options)
         else:
             raise NotImplementedError(f"Unsupported platform: {system}")
 
