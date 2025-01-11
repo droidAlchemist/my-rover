@@ -53,7 +53,7 @@ export type IotVelocityMessageType = {
   angular: CoordinateType;
 };
 
-export interface JoystickUpdateEventType {
+export interface IJoystickUpdateEvent {
   type: MOVEMENT_TYPES;
   x: number;
   y: number;

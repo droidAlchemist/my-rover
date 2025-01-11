@@ -1,7 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import { Box, CssBaseline } from "@mui/material";
 import { Routing } from "./routes";
-import { Footer, Sidenav } from "./components";
+import { Footer, Header } from "./components";
 import { MainLayout } from "./layout";
 
 const App = () => {
@@ -16,10 +16,9 @@ const App = () => {
     >
       <BrowserRouter>
         <CssBaseline />
+        <Header />
         <MainLayout>
-          <Sidenav>
-            <Routing />
-          </Sidenav>
+          <Routing />
         </MainLayout>
         <Footer />
       </BrowserRouter>

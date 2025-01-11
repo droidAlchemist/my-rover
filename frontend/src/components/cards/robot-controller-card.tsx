@@ -1,9 +1,13 @@
-import { IOT_ROS2_TOPICS, IotVelocityMessageType } from "@/types";
+import {
+  IJoystickUpdateEvent,
+  IOT_ROS2_TOPICS,
+  IotVelocityMessageType,
+} from "@/types";
 import { getCommandVelocity } from "@/utils";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { mqtt } from "aws-iot-device-sdk-v2";
 import { useCallback, useEffect, useState } from "react";
-import Joystick, { Direction, IJoystickChangeValue } from "rc-joystick";
+import { Joystick } from "react-joystick-component";
 
 interface RobotControllerCardProps {
   connection: mqtt.MqttClientConnection | null;
@@ -12,22 +16,43 @@ interface RobotControllerCardProps {
 export function RobotControllerCard({ connection }: RobotControllerCardProps) {
   let counter = 0;
   let timer: NodeJS.Timeout | undefined;
-  const [joystickStatus, setJoystickStatus] = useState<IJoystickChangeValue>();
+  const [joystickStatus, setJoystickStatus] = useState<IJoystickUpdateEvent>();
+  const [twist, setTwist] = useState<IotVelocityMessageType>({
+    linear: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+    angular: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+  });
 
-  const onChangeJoystick = useCallback((val: IJoystickChangeValue) => {
+  const onChangeJoystick = useCallback((val: any) => {
     setJoystickStatus(val);
+  }, []);
+
+  const onStopJoystick = useCallback(() => {
+    setJoystickStatus({
+      type: "stop",
+      x: 0,
+      y: 0,
+      direction: null,
+      distance: 0,
+    });
   }, []);
 
   const publishMessage = useCallback(
     (cmd: IotVelocityMessageType) => {
       if (connection) {
-        console.log("message sent");
-        console.log(cmd);
-        // connection.publish(
-        //   IOT_ROS2_TOPICS.CONTROL,
-        //   JSON.stringify(cmd),
-        //   mqtt.QoS.AtMostOnce,
-        // );
+        setTwist(cmd);
+        connection.publish(
+          IOT_ROS2_TOPICS.CONTROL,
+          JSON.stringify(cmd),
+          mqtt.QoS.AtMostOnce,
+        );
       }
     },
     [connection],
@@ -35,25 +60,22 @@ export function RobotControllerCard({ connection }: RobotControllerCardProps) {
 
   useEffect(() => {
     if (joystickStatus !== undefined) {
-      const angle = joystickStatus?.angle || 0;
-      const distance = joystickStatus?.distance;
+      const angle = joystickStatus?.x || 0;
+      const distance = joystickStatus?.y;
       if (angle > 0 || distance > 0) {
         const cmd = getCommandVelocity(joystickStatus);
         publishMessage(cmd);
         timer = setInterval(() => {
           counter++;
-          console.log("---------------");
-          console.log("Send twist cmd -> " + counter);
+          // console.log("---------------");
+          // console.log("Send twist cmd -> " + counter);
           publishMessage(cmd);
-          console.log("---------------");
+          // console.log("---------------");
         }, 1000);
-        if (
-          joystickStatus.direction === Direction.Center &&
-          timer !== undefined
-        ) {
-          console.log("timer");
-          console.log(timer);
-          console.log("clear timer");
+        if (joystickStatus?.distance === 0 && timer !== undefined) {
+          // console.log("timer");
+          // console.log(timer);
+          // console.log("clear timer");
           clearInterval(timer);
         }
       }
@@ -73,7 +95,24 @@ export function RobotControllerCard({ connection }: RobotControllerCardProps) {
         alignItems: "center",
       }}
     >
-      <Joystick throttle={500} onChange={onChangeJoystick} />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          gap: 3,
+        }}
+      >
+        <Typography>x = {twist?.linear.x}</Typography>
+        <Typography>z = {twist?.angular.z}</Typography>
+        {/* <Typography>d = {joystickStatus?.distance}</Typography> */}
+      </Box>
+      <Joystick
+        throttle={250}
+        baseColor={"#FFFF99"}
+        stickColor={"#FFD300"}
+        move={onChangeJoystick}
+        stop={onStopJoystick}
+      />
     </Box>
   );
 }

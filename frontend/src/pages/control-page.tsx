@@ -1,17 +1,20 @@
-import { Box } from "@mui/material";
+import { Box, Button, Divider, Drawer, Fab, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import {
   Assessment,
+  AutoAwesome,
   Camera,
+  ElectricCar,
   FlashlightOn,
-  Navigation,
+  SportsEsports,
 } from "@mui/icons-material";
 import {
   VideoStreaming,
   StatusInfoCard,
   RobotControllerCard,
-  LidarCard,
   TelemetryCard,
+  OdometryCard,
+  MiniDrawer,
 } from "@/components";
 import { useAwsCredentials, useAwsIotMqtt } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
@@ -33,6 +36,11 @@ export const ControlPage = () => {
   const [temperatureData, setTemperatureData] = useState<string>();
   const [batteryPercent, setBatteryPercent] = useState<string>("0%");
   const [odometryData, setOdometryData] = useState<number[]>();
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = (newOpen: boolean) => () => {
+    setOpen(newOpen);
+  };
 
   const onClickLed = useCallback((value: boolean) => {
     console.log(value);
@@ -93,79 +101,116 @@ export const ControlPage = () => {
 
   return (
     <Box
-      sx={{ display: "flex", flexDirection: "column", position: "relative" }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 9 }}>
-          <Grid container spacing={3}>
-            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-              <StatusInfoCard
-                title="LED Light"
-                count="OFF"
-                gradientColor="linear-gradient(310deg, #fb6340, #fbb140)"
-                activeStatus={false}
-                onAction={onClickLed}
-                icon={<FlashlightOn />}
-                percentage={{
-                  color: "#F0000F",
-                  count: batteryPercent,
-                  text: "battery remaining.",
-                }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-              <StatusInfoCard
-                title="Camera 1"
-                count={cameraActive ? "ON" : "OFF"}
-                gradientColor="linear-gradient(310deg,#8A2387,#FF0080)"
-                activeStatus={cameraActive}
-                onAction={onClickCamera}
-                icon={<Camera />}
-                percentage={{
-                  color: "#F0000F",
-                  count: "x=1 y=1",
-                  text: " Pose",
-                }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-              <StatusInfoCard
-                title="LIDAR"
-                count="OFF"
-                gradientColor="linear-gradient(310deg,#1171ef,#11cdef)"
-                activeStatus={false}
-                icon={<Navigation />}
-                percentage={{
-                  color: "error",
-                  count: "Unavailable!",
-                  text: "Please check wiring",
-                }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              {/* Show video data using kinesis from ROS2 */}
-              {/* <VideoStreaming /> */}
-            </Grid>
+      <Grid size={{ xs: 9 }}>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <StatusInfoCard
+              title="LED Light"
+              count="OFF"
+              gradientColor="linear-gradient(310deg, #fb6340, #fbb140)"
+              activeStatus={false}
+              onAction={onClickLed}
+              icon={<FlashlightOn />}
+              percentage={{
+                color: "#F0000F",
+                count: batteryPercent,
+                text: "battery remaining.",
+              }}
+            />
           </Grid>
-        </Grid>
-        <Grid size={{ xs: 3 }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <StatusInfoCard
+              title="Camera 1"
+              count={cameraActive ? "ON" : "OFF"}
+              gradientColor="linear-gradient(310deg,#8A2387,#FF0080)"
+              activeStatus={cameraActive}
+              onAction={onClickCamera}
+              icon={<Camera />}
+              percentage={{
+                color: "#F0000F",
+                count: "x=1 y=1",
+                text: " Pose",
+              }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <TelemetryCard
-              gradientColor="linear-gradient(310deg, #a8ff78, #11cdef)"
+              gradientColor="linear-gradient(310deg,rgb(80, 92, 184), #11cdef)"
               icon={<Assessment />}
               data={{
                 voltage: voltageData,
-                odometry: odometryData,
                 temperature: temperatureData,
               }}
             />
-            {/* Show Lidar data */}
-            {/* <LidarCard image="lidar.jpg" /> */}
-            {/* Control robot by sending x,z pos using IOT Core to ROS2 */}
-            <RobotControllerCard connection={connection} />
-          </Box>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <OdometryCard
+              gradientColor="linear-gradient(310deg, #a8ff78, #11cdef)"
+              icon={<ElectricCar />}
+              data={{
+                odometry: odometryData,
+              }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            {/* Show video data using kinesis from ROS2 */}
+            <VideoStreaming />
+          </Grid>
         </Grid>
       </Grid>
+      <Box sx={{ position: "fixed", left: 30, top: "42.5%" }}>
+        <Fab
+          color={open ? "error" : "warning"}
+          aria-label="Show/Hide Controller"
+          onClick={toggleDrawer(!open)}
+          size="large"
+          variant="extended"
+          sx={{ mt: 2 }}
+        >
+          <SportsEsports sx={{ mr: 1 }} />
+          {open ? "Stop" : "Start"}
+        </Fab>
+      </Box>
+      <MiniDrawer open={open}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: 190,
+            py: 2,
+            gap: 1,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              pl: 1,
+              gap: 1,
+            }}
+          >
+            <AutoAwesome sx={{ fontSize: 20, color: "#11cdef" }} />
+            <Typography
+              variant="h6"
+              sx={{
+                fontSize: "0.875rem !important",
+                fontWeight: 600,
+                color: "#344767",
+              }}
+              component="div"
+            >
+              Robot Controller
+            </Typography>
+          </Box>
+          <Divider />
+          <RobotControllerCard connection={connection} />
+        </Box>
+      </MiniDrawer>
     </Box>
   );
 };

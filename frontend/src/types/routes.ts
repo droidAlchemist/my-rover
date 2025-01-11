@@ -4,3 +4,9 @@ export const ROUTES = {
   LOG_PAGE: "/log",
   DETAILS_PAGE: "/details",
 };
+
+export type PageMenuItem = {
+  text: string;
+  icon: JSX.Element;
+  url: string;
+};

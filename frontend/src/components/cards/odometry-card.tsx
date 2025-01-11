@@ -4,17 +4,13 @@ import Card from "@mui/material/Card";
 import { ReactNode } from "react";
 import { TelemetryTypographyItem } from "../basic-components";
 
-interface TelemetryCardProps {
+interface OdometryCardProps {
   gradientColor: string;
   icon: ReactNode;
   data: IotSensorMessageType;
 }
 
-export function TelemetryCard({
-  icon,
-  gradientColor,
-  data,
-}: TelemetryCardProps) {
+export function OdometryCard({ icon, gradientColor, data }: OdometryCardProps) {
   return (
     <Card
       sx={{
@@ -52,7 +48,7 @@ export function TelemetryCard({
                 color: "#67748e",
               }}
             >
-              Telemetry
+              Odometry
             </Typography>
             <Box
               sx={{
@@ -62,16 +58,18 @@ export function TelemetryCard({
               }}
             >
               <TelemetryTypographyItem
-                title="Voltage"
-                value={data?.voltage}
-                suffix="V"
+                title="Velocity"
+                value={data?.odometry?.[0]}
+                suffix="m/s"
               />
+
               <TelemetryTypographyItem
-                title="Temperature"
-                value={data?.temperature}
-                suffix="°C"
+                title="Ang. Velocity"
+                value={data?.odometry?.[1]}
+                suffix="m/s"
               />
-              <TelemetryTypographyItem title="Pose" />
+
+              <TelemetryTypographyItem title="IMU" />
             </Box>
           </Box>
           <Box
@@ -110,4 +108,4 @@ export function TelemetryCard({
   );
 }
 
-export default TelemetryCard;
+export default OdometryCard;

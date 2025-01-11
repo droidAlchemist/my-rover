@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { ReactNode } from "react";
 
 interface MainLayoutProps {
@@ -6,26 +6,39 @@ interface MainLayoutProps {
 }
 export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <Box
+    <Container
+      maxWidth="xl"
       sx={{
-        px: 3,
-        display: "flex",
         minHeight: "96vh",
+        px: "0 !important",
+        py: 4,
+        mt: 11,
+        overflow: "auto",
       }}
     >
       <Box
-        height="300px"
-        width="100vw"
-        position="absolute"
-        top={0}
-        left={0}
         sx={{
           opacity: 1,
           background: "#11cdef",
+          height: "400px",
+          width: "100vw",
+          position: "absolute",
+          zIndex: 1,
+          top: 0,
+          left: 0,
         }}
       />
-      {children}
-    </Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+          zIndex: 8,
+        }}
+      >
+        {children}
+      </Box>
+    </Container>
   );
 };
 

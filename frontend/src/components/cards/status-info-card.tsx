@@ -39,6 +39,7 @@ export function StatusInfoCard({
   return (
     <Card
       sx={{
+        minHeight: "120px",
         "&.MuiPaper-root": {
           borderRadius: "1rem",
         },

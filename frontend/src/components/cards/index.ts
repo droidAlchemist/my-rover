@@ -5,3 +5,4 @@ export * from "./status-info-card";
 export * from "./info-card";
 export * from "./robot-settings-card";
 export * from "./telemetry-card";
+export * from "./odometry-card";

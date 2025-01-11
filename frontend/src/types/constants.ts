@@ -1,34 +1,28 @@
+import { IotVelocityMessageType } from "./iot";
+
 // Design
-export const DRAWER_WIDTH = 240;
+export const DRAWER_WIDTH = 200;
 
-// Telemetry
-export enum IOT_ROS2_TOPICS {
-  "TELEMETRY" = "rover1/telemetry",
-  "CONTROL" = "rover1/cmd_vel",
-  "CAMERA" = "rover1/camera",
-}
-export enum TELEMETRY_MESSAGE_TYPES {
-  "VOLTAGE" = "voltage",
-  "TEMPERATURE" = "temperature",
-  "ODOMETRY" = "odom",
-  "POSE" = "pose",
-  "IMU" = "imu",
-}
-
-// Camera Control
-export type CAMERA_ACTIONS = "stop" | "start";
-
-// ROBOT Control
-
-export type DIRECTION_TYPES = "FORWARD" | "RIGHT" | "LEFT" | "BACKWARD";
-export type MOVEMENT_TYPES = "move" | "stop" | "start";
+// Default Twist Message
+export const DEFAULT_TWIST_MESSAGE: IotVelocityMessageType = {
+  linear: {
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  angular: {
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+};
 
 // Rasp Rover params
-export const ROBOT_MAX_LINEAR_VELOCITY = 0.65;
+export const ROBOT_MAX_LINEAR_VELOCITY = 0.6;
 export const ROBOT_MAX_ANGULAR_VELOCITY = 0.5;
 // Multiplier to smoothen velocity
-export const ROBOT_VELOCITY_MULTIPLIER = 0.01;
-export const ROBOT_ANGULAR_MULTIPLIER = 0.01;
+export const ROBOT_VELOCITY_MULTIPLIER = 0.006;
+export const ROBOT_ANGULAR_MULTIPLIER = 0.005;
 
 // Kinesis WebRTC
 export const ERROR_CHANNEL_ARN_MISSING = "Missing channel ARN";
