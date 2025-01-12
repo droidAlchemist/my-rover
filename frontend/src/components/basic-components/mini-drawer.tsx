@@ -19,6 +19,7 @@ export function MiniDrawer({ children, open }: MiniDrawerProps) {
             height: 250,
             top: "35%",
             backgroundColor: "transparent",
+            border: "none",
           },
         }}
       >

@@ -10,9 +10,6 @@ ros2 launch ugv_bringup bringup_rover.launch.py
 
 ros2 run ugv_bringup ugv_driver
 
-## other
-ros2 run ugv_bringup ugv_bringup
-
 To echo topics
 ros2 topic list
 

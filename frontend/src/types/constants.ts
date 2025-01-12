@@ -2,6 +2,8 @@ import { IotVelocityMessageType } from "./iot";
 
 // Design
 export const DRAWER_WIDTH = 200;
+export const CONTROLLER_CONTAINER_SIZE = 150;
+export const CONTROLLER_STICK_SIZE = 70;
 
 // Default Twist Message
 export const DEFAULT_TWIST_MESSAGE: IotVelocityMessageType = {
@@ -19,10 +21,10 @@ export const DEFAULT_TWIST_MESSAGE: IotVelocityMessageType = {
 
 // Rasp Rover params
 export const ROBOT_MAX_LINEAR_VELOCITY = 0.6;
-export const ROBOT_MAX_ANGULAR_VELOCITY = 0.5;
+export const ROBOT_MAX_ANGULAR_VELOCITY = 1.5;
 // Multiplier to smoothen velocity
 export const ROBOT_VELOCITY_MULTIPLIER = 0.006;
-export const ROBOT_ANGULAR_MULTIPLIER = 0.005;
+export const ROBOT_ANGULAR_MULTIPLIER = 0.01;
 
 // Kinesis WebRTC
 export const ERROR_CHANNEL_ARN_MISSING = "Missing channel ARN";

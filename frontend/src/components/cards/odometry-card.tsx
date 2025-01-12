@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import { ReactNode } from "react";
 import { TelemetryTypographyItem } from "../basic-components";
+import { roundDecimal } from "@/utils";
 
 interface OdometryCardProps {
   gradientColor: string;
@@ -59,13 +60,13 @@ export function OdometryCard({ icon, gradientColor, data }: OdometryCardProps) {
             >
               <TelemetryTypographyItem
                 title="Velocity"
-                value={data?.odometry?.[0]}
+                value={roundDecimal(String(data?.odometry?.[0]))}
                 suffix="m/s"
               />
 
               <TelemetryTypographyItem
                 title="Ang. Velocity"
-                value={data?.odometry?.[1]}
+                value={roundDecimal(String(data?.odometry?.[1]))}
                 suffix="m/s"
               />
 

@@ -29,7 +29,7 @@ export const calculateVelocity = (event: IJoystickUpdateEvent) => {
 };
 
 export const calculateAngularVelocity = (event: IJoystickUpdateEvent) => {
-  let value = event.x;
+  let value = -1.25 * event.x;
   // let angularVelocity = value * ROBOT_ANGULAR_MULTIPLIER;
   let angularVelocity = value;
   if (
@@ -37,9 +37,9 @@ export const calculateAngularVelocity = (event: IJoystickUpdateEvent) => {
     event.direction === DIRECTION_TYPES.BACKWARD
   ) {
     angularVelocity = event.distance * ROBOT_ANGULAR_MULTIPLIER;
-    if (event.direction === DIRECTION_TYPES.BACKWARD) {
-      angularVelocity = -angularVelocity;
-    }
+    // if (event.direction === DIRECTION_TYPES.BACKWARD) {
+    //   angularVelocity = -angularVelocity;
+    // }
     // console.log("forward/backward ang vel. = ", angularVelocity);
   }
   angularVelocity = limitAngularVelocity(angularVelocity);
@@ -81,29 +81,31 @@ export const getBatteryPercentage = (voltage: number) => {
   let batteryPercentage = 0;
   if (voltage <= 10.5) {
     batteryPercentage = 0;
-  } else if (voltage <= 11) {
+  } else if (voltage <= 10.8) {
     batteryPercentage = 5;
-  } else if (voltage <= 11.31) {
+  } else if (voltage <= 10.9) {
     batteryPercentage = 10;
-  } else if (voltage <= 11.58) {
-    batteryPercentage = 20;
-  } else if (voltage <= 11.75) {
-    batteryPercentage = 30;
+  } else if (voltage <= 11.0) {
+    batteryPercentage = 15;
+  } else if (voltage <= 11.2) {
+    batteryPercentage = 25;
+  } else if (voltage <= 11.4) {
+    batteryPercentage = 35;
+  } else if (voltage <= 11.6) {
+    batteryPercentage = 45;
+  } else if (voltage <= 11.8) {
+    batteryPercentage = 55;
   } else if (voltage <= 11.9) {
-    batteryPercentage = 40;
-  } else if (voltage <= 12.06) {
-    batteryPercentage = 50;
+    batteryPercentage = 65;
+  } else if (voltage <= 12.05) {
+    batteryPercentage = 75;
+  } else if (voltage <= 12.1) {
+    batteryPercentage = 85;
   } else if (voltage <= 12.2) {
-    batteryPercentage = 60;
-  } else if (voltage <= 12.32) {
-    batteryPercentage = 70;
-  } else if (voltage <= 12.42) {
-    batteryPercentage = 80;
-  } else if (voltage <= 12.5) {
-    batteryPercentage = 90;
-  } else if (voltage <= 12.6) {
     batteryPercentage = 95;
-  } else if (voltage >= 12.6) {
+  } else if (voltage <= 12.25) {
+    batteryPercentage = 98;
+  } else if (voltage >= 12.3) {
     batteryPercentage = 100;
   }
   return batteryPercentage;

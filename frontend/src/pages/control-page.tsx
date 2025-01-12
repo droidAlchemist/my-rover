@@ -1,11 +1,11 @@
-import { Box, Button, Divider, Drawer, Fab, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import {
   Assessment,
-  AutoAwesome,
   Camera,
   ElectricCar,
   FlashlightOn,
+  NavigationRounded,
   SportsEsports,
 } from "@mui/icons-material";
 import {
@@ -19,7 +19,9 @@ import {
 import { useAwsCredentials, useAwsIotMqtt } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
 import {
+  DEFAULT_TWIST_MESSAGE,
   IOT_ROS2_TOPICS,
+  IotVelocityMessageType,
   TELEMETRY_MESSAGE_TYPES,
   TelemetryMessageType,
 } from "@/types";
@@ -36,11 +38,17 @@ export const ControlPage = () => {
   const [temperatureData, setTemperatureData] = useState<string>();
   const [batteryPercent, setBatteryPercent] = useState<string>("0%");
   const [odometryData, setOdometryData] = useState<number[]>();
-  const [open, setOpen] = useState(false);
+  const [twist, setTwist] = useState<IotVelocityMessageType>({
+    ...DEFAULT_TWIST_MESSAGE,
+  });
+  const [openJoystickDrawer, setJoystickDrawer] = useState(true);
 
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
-  };
+  const toggleDrawer = useCallback(
+    (newOpen: boolean) => () => {
+      setJoystickDrawer(newOpen);
+    },
+    [],
+  );
 
   const onClickLed = useCallback((value: boolean) => {
     console.log(value);
@@ -68,7 +76,7 @@ export const ControlPage = () => {
       switch (messageObject.type) {
         case VOLTAGE:
           const volt = messageObject.data as number;
-          const calculatedPercent = getBatteryPercentage(volt * 100);
+          const calculatedPercent = getBatteryPercentage(volt);
           setVoltageData(String(volt));
           setBatteryPercent(String(calculatedPercent) + "%");
           break;
@@ -108,37 +116,50 @@ export const ControlPage = () => {
     >
       <Grid size={{ xs: 9 }}>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+          <Grid size={{ xs: 12, md: 6, lg: 2 }}>
             <StatusInfoCard
               title="LED Light"
-              count="OFF"
+              statusText="OFF"
               gradientColor="linear-gradient(310deg, #fb6340, #fbb140)"
               activeStatus={false}
               onAction={onClickLed}
               icon={<FlashlightOn />}
-              percentage={{
+              details={{
                 color: "#F0000F",
-                count: batteryPercent,
-                text: "battery remaining.",
+                mainText: batteryPercent,
+                subText: "battery remaining.",
               }}
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+          <Grid size={{ xs: 12, md: 6, lg: 2 }}>
             <StatusInfoCard
               title="Camera 1"
-              count={cameraActive ? "ON" : "OFF"}
+              statusText={cameraActive ? "ON" : "OFF"}
               gradientColor="linear-gradient(310deg,#8A2387,#FF0080)"
               activeStatus={cameraActive}
               onAction={onClickCamera}
               icon={<Camera />}
-              percentage={{
+              details={{
                 color: "#F0000F",
-                count: "x=1 y=1",
-                text: " Pose",
+                mainText: "Damaged",
+                subText: " _",
               }}
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+          <Grid size={{ xs: 12, md: 6, lg: 2 }}>
+            <StatusInfoCard
+              title="LIDAR"
+              statusText={"OFF"}
+              gradientColor="linear-gradient(310deg,#8A2387,#0F0080)"
+              icon={<NavigationRounded />}
+              details={{
+                color: "#F0000F",
+                mainText: "NA",
+                subText: " _",
+              }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 2 }}>
             <TelemetryCard
               gradientColor="linear-gradient(310deg,rgb(80, 92, 184), #11cdef)"
               icon={<Assessment />}
@@ -148,7 +169,7 @@ export const ControlPage = () => {
               }}
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+          <Grid size={{ xs: 12, md: 6, lg: 2 }}>
             <OdometryCard
               gradientColor="linear-gradient(310deg, #a8ff78, #11cdef)"
               icon={<ElectricCar />}
@@ -157,26 +178,28 @@ export const ControlPage = () => {
               }}
             />
           </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 2 }}>
+            <StatusInfoCard
+              title="Joystick"
+              statusText={openJoystickDrawer ? "Active" : "Inactive"}
+              gradientColor="linear-gradient(310deg,#FA2387,#9A0080)"
+              icon={<SportsEsports />}
+              activeStatus={openJoystickDrawer}
+              onAction={toggleDrawer(!openJoystickDrawer)}
+              details={{
+                color: "#F0000F",
+                mainText: `x = ${twist?.linear.x}, z = ${twist?.angular.z}`,
+                subText: " ",
+              }}
+            />
+          </Grid>
           <Grid size={{ xs: 12 }}>
             {/* Show video data using kinesis from ROS2 */}
-            <VideoStreaming />
+            {/* <VideoStreaming /> */}
           </Grid>
         </Grid>
       </Grid>
-      <Box sx={{ position: "fixed", left: 30, top: "42.5%" }}>
-        <Fab
-          color={open ? "error" : "warning"}
-          aria-label="Show/Hide Controller"
-          onClick={toggleDrawer(!open)}
-          size="large"
-          variant="extended"
-          sx={{ mt: 2 }}
-        >
-          <SportsEsports sx={{ mr: 1 }} />
-          {open ? "Stop" : "Start"}
-        </Fab>
-      </Box>
-      <MiniDrawer open={open}>
+      <MiniDrawer open={openJoystickDrawer}>
         <Box
           sx={{
             display: "flex",
@@ -186,29 +209,7 @@ export const ControlPage = () => {
             gap: 1,
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              pl: 1,
-              gap: 1,
-            }}
-          >
-            <AutoAwesome sx={{ fontSize: 20, color: "#11cdef" }} />
-            <Typography
-              variant="h6"
-              sx={{
-                fontSize: "0.875rem !important",
-                fontWeight: 600,
-                color: "#344767",
-              }}
-              component="div"
-            >
-              Robot Controller
-            </Typography>
-          </Box>
-          <Divider />
-          <RobotControllerCard connection={connection} />
+          <RobotControllerCard setTwist={setTwist} connection={connection} />
         </Box>
       </MiniDrawer>
     </Box>

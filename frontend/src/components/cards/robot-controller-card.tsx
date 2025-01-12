@@ -1,36 +1,37 @@
 import {
+  CONTROLLER_CONTAINER_SIZE,
+  CONTROLLER_STICK_SIZE,
   IJoystickUpdateEvent,
   IOT_ROS2_TOPICS,
   IotVelocityMessageType,
 } from "@/types";
 import { getCommandVelocity } from "@/utils";
-import { Box, Typography } from "@mui/material";
 import { mqtt } from "aws-iot-device-sdk-v2";
-import { useCallback, useEffect, useState } from "react";
-import { Joystick } from "react-joystick-component";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { Joystick, JoystickShape } from "react-joystick-component";
+import { JoystickWrapper } from "../basic-components";
 
 interface RobotControllerCardProps {
   connection: mqtt.MqttClientConnection | null;
+  setTwist: Dispatch<SetStateAction<IotVelocityMessageType>>;
 }
 
-export function RobotControllerCard({ connection }: RobotControllerCardProps) {
+export function RobotControllerCard({
+  connection,
+  setTwist,
+}: RobotControllerCardProps) {
   let counter = 0;
   let timer: NodeJS.Timeout | undefined;
   const [joystickStatus, setJoystickStatus] = useState<IJoystickUpdateEvent>();
-  const [twist, setTwist] = useState<IotVelocityMessageType>({
-    linear: {
-      x: 0,
-      y: 0,
-      z: 0,
-    },
-    angular: {
-      x: 0,
-      y: 0,
-      z: 0,
-    },
-  });
 
   const onChangeJoystick = useCallback((val: any) => {
+    console.log(val);
     setJoystickStatus(val);
   }, []);
 
@@ -48,6 +49,8 @@ export function RobotControllerCard({ connection }: RobotControllerCardProps) {
     (cmd: IotVelocityMessageType) => {
       if (connection) {
         setTwist(cmd);
+        console.log("Send twist cmd ");
+        console.log(cmd);
         connection.publish(
           IOT_ROS2_TOPICS.CONTROL,
           JSON.stringify(cmd),
@@ -67,15 +70,15 @@ export function RobotControllerCard({ connection }: RobotControllerCardProps) {
         publishMessage(cmd);
         timer = setInterval(() => {
           counter++;
-          // console.log("---------------");
-          // console.log("Send twist cmd -> " + counter);
+          console.log("---------------");
+          console.log("Send twist cmd -> " + counter);
           publishMessage(cmd);
-          // console.log("---------------");
+          console.log("---------------");
         }, 1000);
         if (joystickStatus?.distance === 0 && timer !== undefined) {
-          // console.log("timer");
-          // console.log(timer);
-          // console.log("clear timer");
+          console.log("timer");
+          console.log(timer);
+          console.log("clear timer");
           clearInterval(timer);
         }
       }
@@ -88,31 +91,17 @@ export function RobotControllerCard({ connection }: RobotControllerCardProps) {
   }, [joystickStatus, publishMessage]);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          gap: 3,
-        }}
-      >
-        <Typography>x = {twist?.linear.x}</Typography>
-        <Typography>z = {twist?.angular.z}</Typography>
-        {/* <Typography>d = {joystickStatus?.distance}</Typography> */}
-      </Box>
+    <JoystickWrapper joystickStatus={joystickStatus}>
       <Joystick
         throttle={250}
-        baseColor={"#FFFF99"}
-        stickColor={"#FFD300"}
+        baseShape={JoystickShape.Circle}
+        size={CONTROLLER_CONTAINER_SIZE}
+        stickSize={CONTROLLER_STICK_SIZE}
+        baseColor={"#f1f1f1"}
+        stickColor={"#FFFFFF"}
         move={onChangeJoystick}
         stop={onStopJoystick}
       />
-    </Box>
+    </JoystickWrapper>
   );
 }

@@ -34,15 +34,62 @@ ros2 run iot_controller mqtt_listener
 
 eg.
 
+FORWARD
+
 {
   "linear": {
-    "x": 2.0,
+    "x": 0.2,
     "y": 0.0,
     "z": 0.0
   },
   "angular": {
     "x": 0.0,
     "y": 0.0,
+    "z": 0.2
+  }
+}
+
+LEFT
+
+{
+  "linear": {
+    "x": 0.2,
+    "y": 0.0,
     "z": 0.0
+  },
+  "angular": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 1.5
+  }
+}
+
+RIGHT 
+
+{
+  "linear": {
+    "x": 0.2,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "angular": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": -1.5
+  }
+}
+
+BACKWARD
+
+{
+  "linear": {
+    "x": -0.2,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "angular": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": -0.2
   }
 }

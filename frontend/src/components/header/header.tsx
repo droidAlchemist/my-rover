@@ -40,7 +40,7 @@ const PAGE_LIST: PageMenuItem[] = [
   },
   {
     text: "Settings",
-    icon: <Info sx={{ color: "#11dfgf" }} />,
+    icon: <Info sx={{ color: "#01dfgf" }} />,
     url: ROUTES.DETAILS_PAGE,
   },
 ];
@@ -172,6 +172,7 @@ export const Header = () => {
           >
             {PAGE_LIST.map(({ icon, text, url }) => (
               <Tab
+                key={url}
                 label={text}
                 icon={icon}
                 href={url}

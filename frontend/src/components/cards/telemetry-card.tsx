@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import { ReactNode } from "react";
 import { TelemetryTypographyItem } from "../basic-components";
+import { roundDecimal } from "@/utils";
 
 interface TelemetryCardProps {
   gradientColor: string;
@@ -63,12 +64,12 @@ export function TelemetryCard({
             >
               <TelemetryTypographyItem
                 title="Voltage"
-                value={data?.voltage}
+                value={roundDecimal(data?.voltage)}
                 suffix="V"
               />
               <TelemetryTypographyItem
                 title="Temperature"
-                value={data?.temperature}
+                value={roundDecimal(data?.temperature)}
                 suffix="°C"
               />
               <TelemetryTypographyItem title="Pose" />

@@ -19,7 +19,8 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
       <Box
         sx={{
           opacity: 1,
-          background: "#11cdef",
+          // background: "#11cdef",
+          background: "#50C878",
           height: "400px",
           width: "100vw",
           position: "absolute",

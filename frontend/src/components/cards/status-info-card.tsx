@@ -4,17 +4,17 @@ import Grid from "@mui/material/Grid2";
 import { ReactNode, useState } from "react";
 import { IOSSwitch } from "../basic-components";
 
-type CardPercentage = {
+type CardDetails = {
   color: string;
-  count: string;
-  text: string;
+  mainText: string;
+  subText: string;
 };
 
 interface StatusInfoCardProps {
   title: string;
-  count: string;
+  statusText: string;
   gradientColor: string;
-  percentage: CardPercentage;
+  details: CardDetails;
   icon: ReactNode;
   activeStatus?: boolean;
   onAction?: (value: boolean) => void;
@@ -22,8 +22,8 @@ interface StatusInfoCardProps {
 
 export function StatusInfoCard({
   title,
-  count,
-  percentage,
+  statusText,
+  details,
   icon,
   gradientColor,
   activeStatus = false,
@@ -78,7 +78,7 @@ export function StatusInfoCard({
                     fontWeight: 700,
                   }}
                 >
-                  {count}
+                  {statusText}
                 </Typography>
               </Box>
             </Grid>
@@ -126,10 +126,10 @@ export function StatusInfoCard({
                   display: "flex",
                   fontSize: "0.875rem",
                   fontWeight: 600,
-                  color: percentage.color,
+                  color: details.color,
                 }}
               >
-                {percentage.count}
+                {details.mainText}
               </Typography>
               <Typography
                 variant="body2"
@@ -141,7 +141,7 @@ export function StatusInfoCard({
                   fontWeight: 500,
                 }}
               >
-                {percentage.text}
+                {details.subText}
               </Typography>
             </Box>
             {onAction && (

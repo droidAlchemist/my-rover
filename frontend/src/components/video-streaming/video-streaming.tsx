@@ -11,6 +11,7 @@ export function VideoStreaming() {
           flexDirection: "column",
           alignItems: "center",
           backgroundColor: "black",
+          minHeight: 600,
         }}
       >
         <KinesisWebRTC />

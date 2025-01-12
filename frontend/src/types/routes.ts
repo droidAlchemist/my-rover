@@ -3,6 +3,7 @@ export const ROUTES = {
   CONTROL_PAGE: "/control",
   LOG_PAGE: "/log",
   DETAILS_PAGE: "/details",
+  SETTINGS_PAGE: "/settings",
 };
 
 export type PageMenuItem = {
